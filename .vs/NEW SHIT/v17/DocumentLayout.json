@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "F:\\ayaya\\unity\\NEW SHIT\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{CC962777-B8E3-E517-0F04-4E0D5D67CE29}|Assembly-CSharp.csproj|f:\\ayaya\\unity\\new shit\\assets\\gamemain\\scripts\\ui\\game\\aichattookit\\tts\u0026\u0026stt\\tts.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CC962777-B8E3-E517-0F04-4E0D5D67CE29}|Assembly-CSharp.csproj|solutionrelative:assets\\gamemain\\scripts\\ui\\game\\aichattookit\\tts\u0026\u0026stt\\tts.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{CC962777-B8E3-E517-0F04-4E0D5D67CE29}|Assembly-CSharp.csproj|f:\\ayaya\\unity\\new shit\\assets\\gamemain\\scripts\\ui\\game\\aichattookit\\chat\\chatagentform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CC962777-B8E3-E517-0F04-4E0D5D67CE29}|Assembly-CSharp.csproj|solutionrelative:assets\\gamemain\\scripts\\ui\\game\\aichattookit\\chat\\chatagentform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -39,19 +43,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "TTS.cs",
+              "DocumentMoniker": "F:\\ayaya\\unity\\NEW SHIT\\Assets\\GameMain\\Scripts\\UI\\Game\\AIChatTookit\\TTS\u0026\u0026STT\\TTS.cs",
+              "RelativeDocumentMoniker": "Assets\\GameMain\\Scripts\\UI\\Game\\AIChatTookit\\TTS\u0026\u0026STT\\TTS.cs",
+              "ToolTip": "F:\\ayaya\\unity\\NEW SHIT\\Assets\\GameMain\\Scripts\\UI\\Game\\AIChatTookit\\TTS\u0026\u0026STT\\TTS.cs",
+              "RelativeToolTip": "Assets\\GameMain\\Scripts\\UI\\Game\\AIChatTookit\\TTS\u0026\u0026STT\\TTS.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-03T08:50:45.299Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "ChatAgentForm.cs",
               "DocumentMoniker": "F:\\ayaya\\unity\\NEW SHIT\\Assets\\GameMain\\Scripts\\UI\\Game\\AIChatTookit\\Chat\\ChatAgentForm.cs",
               "RelativeDocumentMoniker": "Assets\\GameMain\\Scripts\\UI\\Game\\AIChatTookit\\Chat\\ChatAgentForm.cs",
-              "ToolTip": "F:\\ayaya\\unity\\NEW SHIT\\Assets\\GameMain\\Scripts\\UI\\Game\\AIChatTookit\\Chat\\ChatAgentForm.cs*",
-              "RelativeToolTip": "Assets\\GameMain\\Scripts\\UI\\Game\\AIChatTookit\\Chat\\ChatAgentForm.cs*",
-              "ViewState": "AgIAAJ0AAAAAAAAAAAAcwLAAAAA8AAAAAAAAAA==",
+              "ToolTip": "F:\\ayaya\\unity\\NEW SHIT\\Assets\\GameMain\\Scripts\\UI\\Game\\AIChatTookit\\Chat\\ChatAgentForm.cs",
+              "RelativeToolTip": "Assets\\GameMain\\Scripts\\UI\\Game\\AIChatTookit\\Chat\\ChatAgentForm.cs",
+              "ViewState": "AgIAAEAAAAAAAAAAAABOwJwAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-26T16:26:21.221Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "LLM.cs",
               "DocumentMoniker": "F:\\ayaya\\unity\\NEW SHIT\\Assets\\AIChatTookit\\Scripts\\LLM\\LLM.cs",
               "RelativeDocumentMoniker": "Assets\\AIChatTookit\\Scripts\\LLM\\LLM.cs",
@@ -63,7 +80,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "ChatSample.cs",
               "DocumentMoniker": "F:\\ayaya\\unity\\NEW SHIT\\Assets\\AIChatTookit\\Scripts\\Chat\\ChatSample.cs",
               "RelativeDocumentMoniker": "Assets\\AIChatTookit\\Scripts\\Chat\\ChatSample.cs",

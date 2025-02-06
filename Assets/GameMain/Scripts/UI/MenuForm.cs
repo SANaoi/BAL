@@ -59,7 +59,7 @@ namespace Aki.UI
             m_HasHit = true;
             GameEntry.DataNode.GetOrAddNode("PlayerMode").SetData<VarInt>(1);
             //TODO ProfileReader.Init(); 
-            m_CanvasGroup.DOFade(0f, 1.0f).
+            m_CanvasGroup.DOFade(0f, 0.1f).
                 OnComplete(ToGame);
         }
 
@@ -67,7 +67,7 @@ namespace Aki.UI
         {
             base.OnResume();
             m_HasHit = false;
-            m_CanvasGroup.DOFade(1, 0.5f);
+            m_CanvasGroup.DOFade(1, 0.1f);
         }
 
         private void ToGame()
