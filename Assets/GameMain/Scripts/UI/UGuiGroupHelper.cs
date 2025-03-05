@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityGameFramework.Runtime;
 
-namespace Aki.UI
+namespace Aki.Scripts.UI
 {
     public class UGuiGroupHelper : UIGroupHelperBase
     {

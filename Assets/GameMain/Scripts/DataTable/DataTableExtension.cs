@@ -1,9 +1,9 @@
 using System;
-using Aki.Utility;
+using Aki.Scripts.Utility;
 using GameFramework;
 using UnityGameFramework.Runtime;
 
-namespace Aki.DataTable
+namespace Aki.Scripts.DataTable
 {
     public static class DataTableExtension
     {

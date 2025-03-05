@@ -1,7 +1,7 @@
 using GameFramework;
 using UnityGameFramework.Runtime;
 
-namespace Aki.DataTable
+namespace Aki.Scripts.DataTable
 {
     /// <summary>
     /// 场景表

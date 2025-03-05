@@ -3,9 +3,11 @@ using GameFramework;
 using UnityEngine;
 using DG.Tweening;
 using UnityGameFramework.Runtime;
-using Aki.Definition.Constant;
+using Aki.Scripts.Definition.Constant;
 
-namespace Aki.UI
+using GameEntry = Aki.Scripts.Base.GameEntry;
+
+namespace Aki.Scripts.UI
 {
     public class MenuForm : UGuiForm
     {

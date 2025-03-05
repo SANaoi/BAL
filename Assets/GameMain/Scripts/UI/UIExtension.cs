@@ -1,10 +1,10 @@
 using GameFramework.DataTable;
-using Aki.DataTable;
-using Aki.Utility;
+using Aki.Scripts.DataTable;
+using Aki.Scripts.Utility;
 using UnityGameFramework.Runtime;
-using GameEntry = Aki.GameEntry;
+using GameEntry = Aki.Scripts.Base.GameEntry;
 
-namespace Aki.UI
+namespace Aki.Scripts.UI
 {
     public static class UIExtension
     {

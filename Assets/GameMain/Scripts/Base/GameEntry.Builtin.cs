@@ -1,6 +1,6 @@
 using UnityGameFramework.Runtime;
 
-namespace Aki
+namespace Aki.Scripts.Base
 {
     public partial class GameEntry
     {

@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using Aki.UI;
+using Aki.Scripts.UI;
 using UnityEngine;
 
 namespace Aki.AI

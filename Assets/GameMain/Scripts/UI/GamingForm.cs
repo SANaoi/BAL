@@ -9,9 +9,9 @@ using GameFramework.Event;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityGameFramework.Runtime;
-using GameEntry = Aki.GameEntry;
+using GameEntry = Aki.Scripts.Base.GameEntry;
 
-namespace Aki.UI
+namespace Aki.Scripts.UI
 {
     public class GamingForm : UGuiForm
     {

@@ -3,10 +3,10 @@ using GameFramework;
 using GameFramework.Event;
 using GameFramework.Fsm;
 using GameFramework.Procedure;
-using Aki.Definition.Constant;
-using Aki.UI;
+using Aki.Scripts.Definition.Constant;
+using Aki.Scripts.UI;
 using UnityGameFramework.Runtime;
-using GameEntry = Aki.GameEntry;
+using GameEntry = Aki.Scripts.Base.GameEntry;
 using System;
 
 namespace Aki.Procedures

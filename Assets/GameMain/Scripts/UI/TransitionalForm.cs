@@ -1,13 +1,15 @@
 using System;
-using Aki.Definition.Constant;
-using Aki.GameArgs;
+using Aki.Scripts.Definition.Constant;
+using Aki.Scripts.GameArgs;
 using DG.Tweening;
 using GameFramework.Event;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityGameFramework.Runtime;
 
-namespace Aki.UI
+using GameEntry = Aki.Scripts.Base.GameEntry;
+
+namespace Aki.Scripts.UI
 {
     public class TransitionalForm : UGuiForm
     {

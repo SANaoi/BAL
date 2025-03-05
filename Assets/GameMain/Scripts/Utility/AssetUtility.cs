@@ -1,6 +1,6 @@
 using GameFramework;
 
-namespace Aki.Utility
+namespace Aki.Scripts.Utility
 {
     public static class AssetUtility
     {

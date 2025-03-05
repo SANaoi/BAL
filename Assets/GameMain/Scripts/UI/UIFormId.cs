@@ -1,4 +1,4 @@
-namespace Aki.UI
+namespace Aki.Scripts.UI
 {
     public enum UIFormId
     {

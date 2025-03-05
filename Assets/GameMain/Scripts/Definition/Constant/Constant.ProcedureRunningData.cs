@@ -1,4 +1,4 @@
-namespace Aki.Definition.Constant
+namespace Aki.Scripts.Definition.Constant
 {
     public class Constant
     {
