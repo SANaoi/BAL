@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using GameFramework;
 using GameFramework.Event;
-// using Aki.CostumAssets;
-// using Aki.GameArgs;
-// using Aki.Games;
-// using Aki.ProfileMessage;
+// using Aki.Scripts.CostumAssets;
+// using Aki.Scripts.GameArgs;
+// using Aki.Scripts.Games;
+// using Aki.Scripts.ProfileMessage;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityGameFramework.Runtime;

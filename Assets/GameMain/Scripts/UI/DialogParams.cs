@@ -1,6 +1,6 @@
 using GameFramework;
 
-namespace Aki.UI
+namespace Aki.Scripts.UI
 {
     /// <summary>
     /// 对话框显示数据。

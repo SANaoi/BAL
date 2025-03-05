@@ -4,13 +4,14 @@ using GameFramework.Event;
 using GameFramework.Fsm;
 using GameFramework.Procedure;
 using UnityGameFramework.Runtime;
+using Aki.Scripts.Games;
 using GameEntry = Aki.Scripts.Base.GameEntry;
 
 namespace Aki.Procedures
 {
     public class ProcedureGame : ProcedureBase
     {
-        
+        private GameControl gameControl;
         protected override void OnEnter(IFsm<IProcedureManager> procedureOwner)
         {
             base.OnEnter(procedureOwner);

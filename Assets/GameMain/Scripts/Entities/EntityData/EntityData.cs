@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Aki.Scripts.Entities.EntityData
+namespace Aki.Scripts.Entities
 {
     public abstract class EntityData
     {
