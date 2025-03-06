@@ -4,10 +4,9 @@ namespace Aki.Scripts.Utility
 {
     public static class AssetUtility
     {
-        public static string GetDataTableAsset(string assetName, LoadType loadType)
+        public static string GetDataTableAsset(string assetName, bool fromBytes = false)
         {
-            return GameFramework.Utility.Text.Format("Assets/GameMain/DataTables/{0}.{1}", assetName,
-                loadType == LoadType.Text ? "txt" : "bytes");
+            return GameFramework.Utility.Text.Format("Assets/GameMain/DataTables/{0}.{1}", assetName, fromBytes ? "bytes" : "txt");
         }
 
         public static string GetSceneAsset(string assetName)

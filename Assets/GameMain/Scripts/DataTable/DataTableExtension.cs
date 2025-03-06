@@ -1,17 +1,20 @@
 using System;
+using Aki.Scripts.Definition.Constant;
 using Aki.Scripts.Utility;
 using GameFramework;
+using GameFramework.DataTable;
+using UnityEngine;
 using UnityGameFramework.Runtime;
 
 namespace Aki.Scripts.DataTable
 {
     public static class DataTableExtension
     {
-        private const string DataRowClassPrefixName = "Aki.DataTable.DR";
-        private static readonly string[] ColumnSplit = new string[] {"\t"};
+        private const string DataRowClassPrefixName = "Aki.Scripts.DataTable.DR";
+        internal static readonly char[] DataSplitSeparators = new char[] { '\t' };
+        internal static readonly char[] DataTrimSeparators = new char[] { '\"' };
 
-        public static void LoadDataTable(this DataTableComponent dataTableComponent, string dataTableName,
-            LoadType loadType, object userData = null)
+        public static void LoadDataTable(this DataTableComponent dataTableComponent, string dataTableName, string dataTableAssetName, object userData = null)
         {
             if (string.IsNullOrEmpty(dataTableName))
             {
@@ -19,30 +22,79 @@ namespace Aki.Scripts.DataTable
                 return;
             }
 
-            string[] splitNames = dataTableName.Split('_');
-            if (splitNames.Length > 2)
+            string[] splitedNames = dataTableName.Split('_');
+            if (splitedNames.Length > 2)
             {
                 Log.Warning("Data table name is invalid.");
                 return;
             }
 
-            string dataRowClassName = DataRowClassPrefixName + splitNames[0];
-
+            string dataRowClassName = DataRowClassPrefixName + splitedNames[0];
             Type dataRowType = Type.GetType(dataRowClassName);
             if (dataRowType == null)
             {
                 Log.Warning("Can not get data row type with class name '{0}'.", dataRowClassName);
                 return;
             }
-            string dataTableNameInType = splitNames.Length > 1 ? splitNames[1] : null;
-            dataTableComponent.LoadDataTable(dataRowType, dataTableName, dataTableNameInType,
-                AssetUtility.GetDataTableAsset(dataTableName, loadType), loadType, userData);
+
+            string name = splitedNames.Length > 1 ? splitedNames[1] : null;
+            Log.Debug(dataRowType+"   "+name);
+            DataTableBase dataTable = dataTableComponent.CreateDataTable(dataRowType, name);
+            dataTable.ReadData(AssetUtility.GetDataTableAsset(dataTableName), Constant.AssetPriority.DataTableAsset, userData);
         }
 
-        public static string[] SplitDataRow(GameFrameworkSegment<string> dataRowSegment)
+        public static Color32 ParseColor32(string value)
         {
-            return dataRowSegment.Source.Substring(dataRowSegment.Offset, dataRowSegment.Length)
-                .Split(ColumnSplit, StringSplitOptions.None);
+            string[] splitValue = value.Split(',');
+            return new Color32(byte.Parse(splitValue[0]), byte.Parse(splitValue[1]), byte.Parse(splitValue[2]), byte.Parse(splitValue[3]));
+        }
+
+        public static Color ParseColor(string value)
+        {
+            string[] splitValue = value.Split(',');
+            return new Color(float.Parse(splitValue[0]), float.Parse(splitValue[1]), float.Parse(splitValue[2]), float.Parse(splitValue[3]));
+        }
+
+        public static Quaternion ParseQuaternion(string value)
+        {
+            string[] splitValue = value.Split(',');
+            return new Quaternion(float.Parse(splitValue[0]), float.Parse(splitValue[1]), float.Parse(splitValue[2]), float.Parse(splitValue[3]));
+        }
+
+        public static Rect ParseRect(string value)
+        {
+            string[] splitValue = value.Split(',');
+            return new Rect(float.Parse(splitValue[0]), float.Parse(splitValue[1]), float.Parse(splitValue[2]), float.Parse(splitValue[3]));
+        }
+
+        public static Vector2 ParseVector2(string value)
+        {
+            string[] splitValue = value.Split(',');
+            return new Vector2(float.Parse(splitValue[0]), float.Parse(splitValue[1]));
+        }
+
+        public static Vector3 ParseVector3(string value)
+        {
+            string[] splitValue = value.Split(',');
+            return new Vector3(float.Parse(splitValue[0]), float.Parse(splitValue[1]), float.Parse(splitValue[2]));
+        }
+
+        public static Vector4 ParseVector4(string value)
+        {
+            string[] splitValue = value.Split(',');
+            return new Vector4(float.Parse(splitValue[0]), float.Parse(splitValue[1]), float.Parse(splitValue[2]), float.Parse(splitValue[3]));
+        }
+
+        public static int[] ParseInt32Array(string value)
+        {
+            string[] splitValue = value.Split(',');
+            int[] result = new int[splitValue.Length];
+            for (int i = 0; i < splitValue.Length; i++)
+            {
+                result[i] = int.Parse(splitValue[i]);
+            }
+
+            return result;
         }
     }
 }

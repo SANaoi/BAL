@@ -59,7 +59,7 @@ namespace Aki.Scripts.UI
         private void OnClickStartGame()
         {
             m_HasHit = true;
-            GameEntry.DataNode.GetOrAddNode("PlayerMode").SetData<VarInt>(1);
+            GameEntry.DataNode.GetOrAddNode("PlayerMode").SetData<VarInt32>(1);
             //TODO ProfileReader.Init(); 
             m_CanvasGroup.DOFade(0f, 0.1f).
                 OnComplete(ToGame);
@@ -80,7 +80,7 @@ namespace Aki.Scripts.UI
             //设置下一场景名称
             GameEntry.DataNode.SetData<VarString>(Constant.ProcedureRunningData.NextSceneName, "Game");
             //可以切换流程了
-            GameEntry.DataNode.SetData<VarBool>(Constant.ProcedureRunningData.CanChangeProcedure, true);
+            GameEntry.DataNode.SetData<VarBoolean>(Constant.ProcedureRunningData.CanChangeProcedure, true);
             
         }
     }

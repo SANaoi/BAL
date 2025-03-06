@@ -29,7 +29,7 @@ namespace Aki.Procedures
             GameEntry.Event.Subscribe(LoadSceneUpdateEventArgs.EventId, OnLoadSceneUpdate);
 
             // 初始化不能切换流程
-            GameEntry.DataNode.SetData<VarBool>(Constant.ProcedureRunningData.CanChangeProcedure, false);
+            GameEntry.DataNode.SetData<VarBoolean>(Constant.ProcedureRunningData.CanChangeProcedure, false);
 
             m_ProcedureOwner = procedureOwner;
 

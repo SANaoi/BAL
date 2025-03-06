@@ -56,10 +56,11 @@ namespace Aki.Scripts.UI
                 m_CanvasGroup.DOFade(0, 0.7f).OnComplete(() => GameEntry.UI.CloseUIForm(UIForm));
             }
         }
-        protected override void OnClose(object userData)
+        protected override void OnClose(bool isShutdown, object userData)
         {
+            base.OnClose(isShutdown, userData);
             GameEntry.Event.Unsubscribe(LoadNextResourcesSuccessArgs.EventId, HideUI);
-            base.OnClose(userData);
+            
         }
     }
 }

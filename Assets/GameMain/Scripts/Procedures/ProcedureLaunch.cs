@@ -8,6 +8,7 @@ using Aki.Scripts.Definition.Constant;
 using UnityGameFramework.Runtime;
 using GameEntry = Aki.Scripts.Base.GameEntry;
 using System;
+using Aki.Scripts.Utility;
 
 namespace Aki.Procedures
 {
@@ -30,7 +31,7 @@ namespace Aki.Procedures
             //设置过渡界面文字
             GameEntry.DataNode.GetOrAddNode(Constant.ProcedureRunningData.TransitionalMessage).SetData<VarString>("Loading.");
             //设置不能改变流程
-            GameEntry.DataNode.GetOrAddNode(Constant.ProcedureRunningData.CanChangeProcedure).SetData<VarBool>(false);
+            GameEntry.DataNode.GetOrAddNode(Constant.ProcedureRunningData.CanChangeProcedure).SetData<VarBoolean>(false);
             m_LoadedFlag.Clear();
             PreloadResources();
         }
@@ -45,10 +46,11 @@ namespace Aki.Procedures
             {
                 if (!iter.Current)
                 {
+                    Log.Info("Data table loading...");
                     return;
                 }
             }
-            
+            Log.Info("All data table loaded.");
             //所有资源加载就绪，进入场景切换流程
             ChangeState<ProcedureChangeScene>(procedureOwner);
         }
@@ -82,8 +84,11 @@ namespace Aki.Procedures
         /// <param name="dataTableName"></param>
         private void LoadDataTable(string dataTableName)
         {
-            m_LoadedFlag.Add(GameFramework.Utility.Text.Format("DataTable.{0}", dataTableName), false);
-            GameEntry.DataTable.LoadDataTable(dataTableName, LoadType.Text, this);
+            string dataTableAssetName = AssetUtility.GetDataTableAsset(dataTableName, false);
+            m_LoadedFlag.Add(dataTableAssetName, false);
+            Log.Info("Start load data table '{0}'...", dataTableName);
+            Log.Info("DataTableAssetName: {0}", dataTableAssetName);
+            GameEntry.DataTable.LoadDataTable(dataTableName, dataTableAssetName, this);
         }
 
         private void OnLoadDataTableFailure(object sender, GameEventArgs e)
@@ -94,8 +99,7 @@ namespace Aki.Procedures
                 return;
             }
 
-            Log.Error("Can not load data table '{0}' from '{1}' with error message '{2}'.", ne.DataTableName,
-                ne.DataTableAssetName, ne.ErrorMessage);
+            Log.Error("Can not load data table '{0}' from '{1}' with error message '{2}'.", ne.DataTableAssetName, ne.DataTableAssetName, ne.ErrorMessage);
         }
         /// <summary>
         /// 如果匹配，它会将资源表名称在 m_LoadedFlag 字典中的状态设置为 true，并输出成功加载的日志信息。
@@ -110,8 +114,9 @@ namespace Aki.Procedures
                 return;
             }
 
-            m_LoadedFlag[GameFramework.Utility.Text.Format("DataTable.{0}", ne.DataTableName)] = true;
-            Log.Info("Load data table '{0}' OK.", ne.DataTableName);
+            m_LoadedFlag[ne.DataTableAssetName] = true;
+
+            Log.Info("Load dictionary '{0}' OK.", ne.DataTableAssetName);
         }
     }
 }

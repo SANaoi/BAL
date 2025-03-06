@@ -35,7 +35,7 @@ namespace Aki.Scripts.FSM
                     if (Input.GetKeyDown(key))
                     {
                         //记录这个移动指令
-                        procedureOwner.SetData<VarInt>("MoveCommand", (int)key);
+                        procedureOwner.SetData<VarInt32>("MoveCommand", (int)key);
                         owner.MOVE_COMMANDS = (int)key;
                         //切换到移动状态
                         ChangeState<PlayerMoveState>(procedureOwner);

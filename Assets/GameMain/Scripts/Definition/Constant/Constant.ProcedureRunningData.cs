@@ -1,6 +1,6 @@
 namespace Aki.Scripts.Definition.Constant
 {
-    public class Constant
+    public  static partial class Constant
     {
         /// <summary>
         /// 流程运行时的数据

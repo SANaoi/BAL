@@ -1,50 +1,108 @@
+﻿//------------------------------------------------------------
+// Game Framework
+// Copyright © 2013-2020 Jiang Yin. All rights reserved.
+// Homepage: https://gameframework.cn/
+// Feedback: mailto:ellan@gameframework.cn
+//------------------------------------------------------------
+// 此文件由工具自动生成，请勿直接修改。
+// 生成时间：2025-03-07 03:30:35.760
+//------------------------------------------------------------
+
 using GameFramework;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using UnityEngine;
 using UnityGameFramework.Runtime;
 
 namespace Aki.Scripts.DataTable
 {
     /// <summary>
-    /// 实体表。
+    /// 实体配置表。
     /// </summary>
     public class DREntity : DataRowBase
     {
         private int m_Id = 0;
 
         /// <summary>
-        /// 实体编号。
+        /// 获取配置编号。
         /// </summary>
         public override int Id
         {
-            get { return m_Id; }
+            get
+            {
+                return m_Id;
+            }
         }
 
         /// <summary>
-        /// 资源名称。
+        /// 获取物体名字。
         /// </summary>
-        public string AssetName { get; private set; }
-
-        /// <summary>
-        /// 资源组名称
-        /// </summary>
-        public string GroupName { get; private set; }
-
-        /// <summary>
-        /// tag标识
-        /// </summary>
-        public string tag { get; set; }
-
-        public override bool ParseDataRow(GameFrameworkSegment<string> dataRowSegment)
+        public string Name
         {
-            string[] text = DataTableExtension.SplitDataRow(dataRowSegment);
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取资源ID。
+        /// </summary>
+        public int AssetId
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取实体组Id。
+        /// </summary>
+        public int EntityGroupId
+        {
+            get;
+            private set;
+        }
+
+        public override bool ParseDataRow(string dataRowString, object userData)
+        {
+            string[] columnStrings = dataRowString.Split(DataTableExtension.DataSplitSeparators);
+            for (int i = 0; i < columnStrings.Length; i++)
+            {
+                columnStrings[i] = columnStrings[i].Trim(DataTableExtension.DataTrimSeparators);
+            }
+
             int index = 0;
             index++;
-            m_Id = int.Parse(text[index++]);
+            m_Id = int.Parse(columnStrings[index++]);
             index++;
-            AssetName = text[index++];
-            GroupName = text[index++];
-            tag = text[index++];
+            Name = columnStrings[index++];
+            AssetId = int.Parse(columnStrings[index++]);
+            EntityGroupId = int.Parse(columnStrings[index++]);
+
+            GeneratePropertyArray();
             return true;
         }
-    }
 
+        public override bool ParseDataRow(byte[] dataRowBytes, int startIndex, int length, object userData)
+        {
+            using (MemoryStream memoryStream = new MemoryStream(dataRowBytes, startIndex, length, false))
+            {
+                using (BinaryReader binaryReader = new BinaryReader(memoryStream, Encoding.UTF8))
+                {
+                    m_Id = binaryReader.Read7BitEncodedInt32();
+                    Name = binaryReader.ReadString();
+                    AssetId = binaryReader.Read7BitEncodedInt32();
+                    EntityGroupId = binaryReader.Read7BitEncodedInt32();
+                }
+            }
+
+            GeneratePropertyArray();
+            return true;
+        }
+
+        private void GeneratePropertyArray()
+        {
+
+        }
+    }
 }

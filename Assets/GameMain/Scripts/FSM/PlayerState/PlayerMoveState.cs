@@ -24,7 +24,7 @@ namespace Aki.Scripts.FSM
             base.OnEnter(procedureOwner);
             owner = procedureOwner.Owner;
             //进入移动状态时，获取移动指令数据
-            moveCommand = (KeyCode)(int)procedureOwner.GetData<VarInt>("MoveCommand");
+            moveCommand = (KeyCode)(int)procedureOwner.GetData<VarInt32>("MoveCommand");
         }
 
         protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)

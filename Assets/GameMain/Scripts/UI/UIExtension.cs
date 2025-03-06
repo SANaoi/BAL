@@ -13,7 +13,7 @@ namespace Aki.Scripts.UI
             IDataTable<DRUIForm> dtUIForm = GameEntry.DataTable.GetDataTable<DRUIForm>();
             DRUIForm drUIForm = dtUIForm.GetDataRow(uiFormId);
             string assetName = AssetUtility.GetUIFormAsset(drUIForm.AssetName);
-            return uiComponent.OpenUIForm(assetName, drUIForm.GroupName,
+            return uiComponent.OpenUIForm(assetName, drUIForm.UIGroupName,
                 drUIForm.PauseCoveredUIForm, userData);
         }
 

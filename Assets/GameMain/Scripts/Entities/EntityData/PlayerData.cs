@@ -12,9 +12,9 @@ namespace Aki.Scripts.Entities
         {
             IDataTable<DREntity> m_GroupTable = GameEntry.DataTable.GetDataTable<DREntity>();
             DREntity m_GroupData = m_GroupTable.GetDataRow(typeId);
-            AssetName = m_GroupData.AssetName;
-            GroupName = m_GroupData.GroupName;
-            m_tag = m_GroupData.tag;
+            // AssetName = m_GroupData.AssetName;
+            // GroupName = m_GroupData.GroupName;
+            // m_tag = m_GroupData.tag;
             ProfileReader.SetPlayerData(this, typeId - 9999);
         }
     }

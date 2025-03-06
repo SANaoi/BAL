@@ -26,7 +26,7 @@ namespace Aki.Procedures
         protected override void OnEnter(IFsm<IProcedureManager> procedureOwner)
         {
             base.OnEnter(procedureOwner);
-            GameEntry.DataNode.SetData<VarBool>(Constant.ProcedureRunningData.CanChangeProcedure, false);
+            GameEntry.DataNode.SetData<VarBoolean>(Constant.ProcedureRunningData.CanChangeProcedure, false);
             GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
             GameEntry.UI.OpenUIForm(UIFormId.MenuForm, this);
         }
@@ -35,7 +35,7 @@ namespace Aki.Procedures
         {
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
             // CanChangeProcedure 为 true 时，进入下一个流程
-            if (GameEntry.DataNode.GetData<VarBool>(Constant.ProcedureRunningData.CanChangeProcedure))
+            if (GameEntry.DataNode.GetData<VarBoolean>(Constant.ProcedureRunningData.CanChangeProcedure))
             {
                 ChangeState<ProcedureChangeScene>(procedureOwner);
             }
