@@ -38,7 +38,6 @@ namespace Aki.Scripts.DataTable
             }
 
             string name = splitedNames.Length > 1 ? splitedNames[1] : null;
-            Log.Debug(dataRowType+"   "+name);
             DataTableBase dataTable = dataTableComponent.CreateDataTable(dataRowType, name);
             dataTable.ReadData(AssetUtility.GetDataTableAsset(dataTableName), Constant.AssetPriority.DataTableAsset, userData);
         }

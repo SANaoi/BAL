@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Aki.Scripts.Entities
@@ -77,5 +78,6 @@ namespace Aki.Scripts.Entities
             get => m_Rotation;
             set => m_Rotation = value;
         }
+
     }
 }

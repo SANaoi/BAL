@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2025-03-08 03:11:39.504
+// 生成时间：2025-03-08 03:11:39.502
 //------------------------------------------------------------
 
 using GameFramework;
@@ -19,14 +19,14 @@ using UnityGameFramework.Runtime;
 namespace Aki.Scripts.DataTable
 {
     /// <summary>
-    /// 场景配置表。
+    /// 对象池配置表。
     /// </summary>
-    public class DRScene : DataRowBase
+    public class DRPoolParam : DataRowBase
     {
         private int m_Id = 0;
 
         /// <summary>
-        /// 获取场景编号。
+        /// 获取配置编号。
         /// </summary>
         public override int Id
         {
@@ -37,9 +37,45 @@ namespace Aki.Scripts.DataTable
         }
 
         /// <summary>
-        /// 获取资源名称。
+        /// 获取组名字。
         /// </summary>
-        public string AssetName
+        public string GroupName
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取自动释放可释放对象的间隔秒数。
+        /// </summary>
+        public float InstanceAutoReleaseInterval
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取实例对象池的容量。
+        /// </summary>
+        public int InstanceCapacity
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取对象池对象过期秒数。
+        /// </summary>
+        public float InstanceExpireTime
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取实体组实例对象池的优先级。
+        /// </summary>
+        public int InstancePriority
         {
             get;
             private set;
@@ -57,7 +93,11 @@ namespace Aki.Scripts.DataTable
             index++;
             m_Id = int.Parse(columnStrings[index++]);
             index++;
-            AssetName = columnStrings[index++];
+            GroupName = columnStrings[index++];
+            InstanceAutoReleaseInterval = float.Parse(columnStrings[index++]);
+            InstanceCapacity = int.Parse(columnStrings[index++]);
+            InstanceExpireTime = float.Parse(columnStrings[index++]);
+            InstancePriority = int.Parse(columnStrings[index++]);
 
             GeneratePropertyArray();
             return true;
@@ -70,7 +110,11 @@ namespace Aki.Scripts.DataTable
                 using (BinaryReader binaryReader = new BinaryReader(memoryStream, Encoding.UTF8))
                 {
                     m_Id = binaryReader.Read7BitEncodedInt32();
-                    AssetName = binaryReader.ReadString();
+                    GroupName = binaryReader.ReadString();
+                    InstanceAutoReleaseInterval = binaryReader.ReadSingle();
+                    InstanceCapacity = binaryReader.Read7BitEncodedInt32();
+                    InstanceExpireTime = binaryReader.ReadSingle();
+                    InstancePriority = binaryReader.Read7BitEncodedInt32();
                 }
             }
 

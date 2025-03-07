@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2025-03-07 03:30:35.760
+// 生成时间：2025-03-08 03:11:39.487
 //------------------------------------------------------------
 
 using GameFramework;
@@ -37,27 +37,36 @@ namespace Aki.Scripts.DataTable
         }
 
         /// <summary>
-        /// 获取物体名字。
+        /// 获取资源名称。
         /// </summary>
-        public string Name
+        public string AssetName
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// 获取资源ID。
+        /// 获取所处资源组名称。
         /// </summary>
-        public int AssetId
+        public string GroupName
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// 获取实体组Id。
+        /// 获取tag标识。
         /// </summary>
-        public int EntityGroupId
+        public string Tag
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 获取对象池参数Id。
+        /// </summary>
+        public int PoolParamId
         {
             get;
             private set;
@@ -75,9 +84,10 @@ namespace Aki.Scripts.DataTable
             index++;
             m_Id = int.Parse(columnStrings[index++]);
             index++;
-            Name = columnStrings[index++];
-            AssetId = int.Parse(columnStrings[index++]);
-            EntityGroupId = int.Parse(columnStrings[index++]);
+            AssetName = columnStrings[index++];
+            GroupName = columnStrings[index++];
+            Tag = columnStrings[index++];
+            PoolParamId = int.Parse(columnStrings[index++]);
 
             GeneratePropertyArray();
             return true;
@@ -90,9 +100,10 @@ namespace Aki.Scripts.DataTable
                 using (BinaryReader binaryReader = new BinaryReader(memoryStream, Encoding.UTF8))
                 {
                     m_Id = binaryReader.Read7BitEncodedInt32();
-                    Name = binaryReader.ReadString();
-                    AssetId = binaryReader.Read7BitEncodedInt32();
-                    EntityGroupId = binaryReader.Read7BitEncodedInt32();
+                    AssetName = binaryReader.ReadString();
+                    GroupName = binaryReader.ReadString();
+                    Tag = binaryReader.ReadString();
+                    PoolParamId = binaryReader.Read7BitEncodedInt32();
                 }
             }
 

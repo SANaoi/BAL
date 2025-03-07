@@ -71,7 +71,7 @@ namespace Aki.Procedures
             // LoadDataTable("SkillMessages");
             // LoadDataTable("Bullect");
             // LoadDataTable("EnemyTank");
-            // LoadDataTable("Entity");
+            LoadDataTable("Entity");
             // LoadDataTable("Sound");
             // LoadDataTable("Tools");
             LoadDataTable("Scene");
@@ -86,8 +86,6 @@ namespace Aki.Procedures
         {
             string dataTableAssetName = AssetUtility.GetDataTableAsset(dataTableName, false);
             m_LoadedFlag.Add(dataTableAssetName, false);
-            Log.Info("Start load data table '{0}'...", dataTableName);
-            Log.Info("DataTableAssetName: {0}", dataTableAssetName);
             GameEntry.DataTable.LoadDataTable(dataTableName, dataTableAssetName, this);
         }
 

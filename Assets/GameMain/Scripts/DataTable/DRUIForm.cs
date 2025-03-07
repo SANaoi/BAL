@@ -5,10 +5,9 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2025-03-07 03:30:35.772
+// 生成时间：2025-03-08 03:11:39.506
 //------------------------------------------------------------
 
-using Aki.Scripts.DataTable;
 using GameFramework;
 using System;
 using System.Collections.Generic;

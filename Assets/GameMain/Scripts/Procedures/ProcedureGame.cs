@@ -6,6 +6,7 @@ using GameFramework.Procedure;
 using UnityGameFramework.Runtime;
 using Aki.Scripts.Games;
 using GameEntry = Aki.Scripts.Base.GameEntry;
+using Aki.Scripts.Entities;
 
 namespace Aki.Procedures
 {
@@ -17,6 +18,8 @@ namespace Aki.Procedures
             base.OnEnter(procedureOwner);
             GameEntry.Event.Fire(this, ReferencePool.Acquire<LoadNextResourcesSuccessArgs>().Fill(true));
 
+            PlayerData playerData = new PlayerData(GameEntry.Entity.GenerateSerialId(), (int)EnumEntity.Player);
+            GameEntry.Entity.ShowEntity<PlayerLogic>((EntityData)playerData, typeof(PlayerLogic), null);
         }
 
         protected override void OnUpdate(IFsm<IProcedureManager> procedureOwner, float elapseSeconds, float realElapseSeconds)

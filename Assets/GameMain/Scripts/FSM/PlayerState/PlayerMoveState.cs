@@ -23,6 +23,7 @@ namespace Aki.Scripts.FSM
         {
             base.OnEnter(procedureOwner);
             owner = procedureOwner.Owner;
+            Log.Debug("进入Move状态");
             //进入移动状态时，获取移动指令数据
             moveCommand = (KeyCode)(int)procedureOwner.GetData<VarInt32>("MoveCommand");
         }
@@ -44,6 +45,7 @@ namespace Aki.Scripts.FSM
         protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)
         {
             base.OnLeave(procedureOwner, isShutdown);
+            exitTimer = 0;
         }
         public static PlayerMoveState Create()
         {
