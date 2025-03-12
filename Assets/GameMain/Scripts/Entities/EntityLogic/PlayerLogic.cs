@@ -1,15 +1,18 @@
-
 using System.Collections.Generic;
-using Aki.Scripts.Base;
 using Aki.Scripts.FSM;
 using GameFramework.Fsm;
 using UnityEngine;
+using UnityGameFramework.Runtime;
+using GameEntry = Aki.Scripts.Base.GameEntry;
+
 
 namespace Aki.Scripts.Entities
 {
     public class PlayerLogic : DefaultEntityLogic
     {
         private Camera m_Camera;
+
+        public  PlayerData playerData;
 
         public int MOVE_COMMANDS;
 
@@ -21,12 +24,19 @@ namespace Aki.Scripts.Entities
         {
             base.OnInit(userData);
             m_Camera = Camera.main;
+            playerData = userData as PlayerData;
             stateList = new List<FsmState<PlayerLogic>>();
         }
 
         protected override void OnShow(object userData)
         {
             base.OnShow(userData);
+
+            if (playerData == null)
+            {
+                Log.Error("Player data is invalid.");
+                return;
+            }
             CreateFsm();
         }
 
@@ -46,6 +56,9 @@ namespace Aki.Scripts.Entities
             fsm.Start<PlayerIdleState>();
         }
 
+        /// <summary>
+        /// 创建状态机
+        /// </summary>
         protected virtual void CreateFsm()
         {
             AddFsmState();

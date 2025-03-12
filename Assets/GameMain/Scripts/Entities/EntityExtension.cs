@@ -36,20 +36,13 @@ namespace Aki.Scripts.Entities
         {
         }
 
-        public static void ShowEntity<T>(this EntityComponent entityComponent, EntityData entityData, Type logicType, object userData = null)
+        public static void ShowEntity(this EntityComponent entityComponent, EntityData entityData, Type logicType)
         {
             int id = entityData.Id;
             string assetName = AssetUtility.GetEntityAsset(entityData.AssetName);
             string groupName = entityData.GroupName;
-            
-            if (!entityComponent.HasEntityGroup(entityData.GroupName))
-            {
-                // DRPoolParam dRPoolParam = GameEntry.DataTable.GetDataTable<DRPoolParam>().GetDataRow(entityData.PoolParamId);
-                // PoolParamData poolParamData = entityData.EntityGroupData.PoolParamData;
-                // GameEntry.Entity.AddEntityGroup(entityData.GroupName, poolParamData.InstanceAutoReleaseInterval, poolParamData.InstanceCapacity, poolParamData.InstanceExpireTime, poolParamData.InstancePriority);
-            }
 
-            entityComponent.ShowEntity(id, logicType, assetName, groupName, userData);
+            entityComponent.ShowEntity(id, logicType, assetName, groupName, entityData);
         }
 
         /// <summary>
