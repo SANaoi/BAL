@@ -11,8 +11,6 @@ namespace Aki.Scripts.FSM
     {
         private PlayerLogic owner;
 
-        private static KeyCode[] MOVE_COMMANDS = { KeyCode.LeftArrow, KeyCode.RightArrow, KeyCode.UpArrow, KeyCode.DownArrow };
-
         protected override void OnInit(ProcedureOwner procedureOwner)
         {
             base.OnInit(procedureOwner);
@@ -23,26 +21,23 @@ namespace Aki.Scripts.FSM
             base.OnEnter(procedureOwner);
             Log.Debug("进入Idle状态");
             owner = procedureOwner.Owner;
+
+            owner.targetSpeedModifier = 0f;
+            owner.ResetVelocity();
         }
 
         protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
-            if (Input.anyKeyDown)
+            owner.playerData.speedModifier = Mathf.Lerp(owner.playerData.speedModifier, owner.targetSpeedModifier, 3 * Time.deltaTime);
+
+            if (owner.movementInput == Vector2.zero)
             {
-                foreach (KeyCode key in MOVE_COMMANDS)
-                {
-                    if (Input.GetKeyDown(key))
-                    {
-                        //记录这个移动指令
-                        procedureOwner.SetData<VarInt32>("MoveCommand", (int)key);
-                        owner.MOVE_COMMANDS = (int)key;
-                        //切换到移动状态
-                        ChangeState<PlayerMoveState>(procedureOwner);
-                        return;
-                    }
-                }
+                return;
             }
+            //切换到移动状态
+            ChangeState<PlayerMoveState>(procedureOwner);
+            return;
         }
 
         protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)

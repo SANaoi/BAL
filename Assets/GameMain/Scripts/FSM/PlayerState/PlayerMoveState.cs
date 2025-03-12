@@ -1,19 +1,15 @@
-using Aki.Scripts.Entities;
 using GameFramework;
 using GameFramework.Fsm;
-using UnityEngine;
+using Aki.Scripts.Entities;
 using UnityGameFramework.Runtime;
 using ProcedureOwner = GameFramework.Fsm.IFsm<Aki.Scripts.Entities.PlayerLogic>;
+using UnityEngine;
 
 namespace Aki.Scripts.FSM
 {
     public class PlayerMoveState : FsmState<PlayerLogic>, IReference
     {
         private PlayerLogic owner;
-
-        private KeyCode moveCommand;
-        private static readonly float EXIT_TIME = 1f;
-        private float exitTimer;
 
         protected override void OnInit(ProcedureOwner procedureOwner)
         {
@@ -24,20 +20,29 @@ namespace Aki.Scripts.FSM
             base.OnEnter(procedureOwner);
             owner = procedureOwner.Owner;
             Log.Debug("进入Move状态");
-            //进入移动状态时，获取移动指令数据
-            moveCommand = (KeyCode)(int)procedureOwner.GetData<VarInt32>("MoveCommand");
         }
 
         protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
-
-            //计时器累计时间
-            exitTimer += elapseSeconds;
-            //达到指定时间后
-            if (exitTimer > EXIT_TIME)
+            if (owner.playerMoveContext.y < 0)
             {
-                //切换回空闲状态
+                owner.targetSpeedModifier = -2f;
+            }
+            else if (owner.playerMoveContext.y >= 0)
+            {
+                owner.targetSpeedModifier = 2f;
+            }
+            else
+            {
+                owner.targetSpeedModifier = 5f;
+            }
+            Log.Debug(owner.targetSpeedModifier);
+            owner.playerData.speedModifier = Mathf.Lerp(owner.playerData.speedModifier, owner.targetSpeedModifier, 3 * Time.deltaTime);
+
+            //切换回空闲状态
+            if (owner.playerMoveContext == Vector2.zero)
+            {
                 ChangeState<PlayerIdleState>(procedureOwner);
             }
         }
@@ -45,7 +50,6 @@ namespace Aki.Scripts.FSM
         protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)
         {
             base.OnLeave(procedureOwner, isShutdown);
-            exitTimer = 0;
         }
         public static PlayerMoveState Create()
         {
