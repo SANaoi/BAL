@@ -8,6 +8,7 @@ using GameEntry = Aki.Scripts.Base.GameEntry;
 using System.Net.Security;
 using System;
 using UnityEngine.InputSystem;
+using Aki.Scripts.Definition.AnimationName;
 
 
 namespace Aki.Scripts.Entities
@@ -26,29 +27,33 @@ namespace Aki.Scripts.Entities
         private Vector3 moveVelocity; // 平滑速度向量
 
         // Entity挂载
-        public CharacterController characterController;
         public Rigidbody rb;
+        public Animator animator;
         protected PlayerInputAction inputActions;
+        public CharacterController characterController;
         protected PlayerInputAction.PlayerActions moveActions;
 
         // 玩家数据
-        private Camera m_Camera;
+        public Camera m_Camera;
         public PlayerData playerData;
         protected IFsm<PlayerLogic> fsm;
         protected List<FsmState<PlayerLogic>> stateList;
+        private PlayerAnimationName playerAnimationName;
 
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
 
-            m_Camera = Camera.main;
-            playerData = userData as PlayerData;
-            stateList = new List<FsmState<PlayerLogic>>();
-            inputActions = new PlayerInputAction();
-            moveActions = inputActions.Player;
+            m_Camera            = Camera.main;
+            playerData          = userData as PlayerData;
+            playerAnimationName = new PlayerAnimationName();
+            stateList           = new List<FsmState<PlayerLogic>>();
+            inputActions        = new PlayerInputAction();
+            moveActions         = inputActions.Player;
 
+            animator            = GetComponent<Animator>();
             characterController = GetComponent<CharacterController>();
-            rb = GetComponent<Rigidbody>();
+            rb                  = GetComponent<Rigidbody>();
         }
 
         protected override void OnShow(object userData)
@@ -63,13 +68,19 @@ namespace Aki.Scripts.Entities
             CreateFsm();
 
             inputActions.Enable();
+            playerAnimationName.InitializeData();
             AddInputActionsCallbacks(); // 添加输入回调
+
+            if (stateList != null && animator != null)
+            {
+                playerData.speedModifier = animator.GetFloat(playerAnimationName.speedParameterHash);
+            }
         }
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(elapseSeconds, realElapseSeconds);
-            
+            PlayAnimation(playerAnimationName.speedParameterHash, playerData.speedModifier);
             ReadMovementInput();
         }
 
@@ -79,6 +90,11 @@ namespace Aki.Scripts.Entities
         private void FixedUpdate()
         {
             Move();
+        }
+
+        private void LateUpdate()
+        {
+            m_Camera.transform.position = new Vector3(transform.position.x, m_Camera.transform.position.y, transform.position.z); // 相机跟随
         }
 
         protected override void OnHide(bool isShutdown, object userData)
@@ -261,7 +277,30 @@ namespace Aki.Scripts.Entities
         private void GetplayerMoveInput(InputAction.CallbackContext context)
         {
             playerMoveContext = context.ReadValue<Vector2>();
-        } 
+        }
         #endregion
+
+        #region Animation Function
+        public void PlayAnimation(int animationHash, float value)
+        {
+            animator.SetFloat(animationHash, value);
+        }
+
+        public void PlayAnimation(int animationHash)
+        {
+            animator.Play(animationHash);
+        }
+
+        public void StartAnimation(int animationHash)
+        {
+            animator.SetBool(animationHash, true);
+        }
+
+        public void StopAnimation(int animationHash)
+        {
+            animator.SetBool(animationHash, false);
+        }
+
+        # endregion
     }
 }
