@@ -1,5 +1,5 @@
-﻿#	相机配置表			
-#	Id		AssetName	DefaultLocalPosition
-#	int		string	Vector3
-#	相机编号	备注	资源名称	初始位置
-	2000	大厅人物相机	CameraPlayer	"""0,0,-4"""
+﻿#	相机配置表				
+#	Id		AssetName	GroupName	DefaultLocalPosition
+#	int		string	string	Vector3
+#	相机编号	备注	资源名称	所处资源组名称	初始位置
+	2000	大厅人物相机	CameraPlayer	Camera	"""0,1.5,0"""

@@ -37,6 +37,6 @@ namespace Aki.Scripts.Games
             PlayerData playerData = new PlayerData(GameEntry.Entity.GenerateSerialId(), (int)EnumEntity.Player);
         
             GameEntry.Entity.ShowEntity(playerData, typeof(PlayerLogic));
-        }
+        }   
     }
 }

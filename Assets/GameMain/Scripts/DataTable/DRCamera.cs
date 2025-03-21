@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2025-03-21 18:55:37.703
+// 生成时间：2025-03-22 02:05:55.629
 //------------------------------------------------------------
 
 using GameFramework;
@@ -46,6 +46,15 @@ namespace Aki.Scripts.DataTable
         }
 
         /// <summary>
+        /// 获取所处资源组名称。
+        /// </summary>
+        public string GroupName
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// 获取初始位置。
         /// </summary>
         public Vector3 DefaultLocalPosition
@@ -67,6 +76,7 @@ namespace Aki.Scripts.DataTable
             m_Id = int.Parse(columnStrings[index++]);
             index++;
             AssetName = columnStrings[index++];
+            GroupName = columnStrings[index++];
             DefaultLocalPosition = DataTableExtension.ParseVector3(columnStrings[index++]);
 
             GeneratePropertyArray();
@@ -81,6 +91,7 @@ namespace Aki.Scripts.DataTable
                 {
                     m_Id = binaryReader.Read7BitEncodedInt32();
                     AssetName = binaryReader.ReadString();
+                    GroupName = binaryReader.ReadString();
                     DefaultLocalPosition = binaryReader.ReadVector3();
                 }
             }

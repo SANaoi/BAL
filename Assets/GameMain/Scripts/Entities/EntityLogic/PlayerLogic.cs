@@ -7,6 +7,9 @@ using UnityEngine.InputSystem;
 using Aki.Plugins;
 using Aki.Scripts.FSM;
 using Aki.Scripts.Definition.AnimationName;
+using Aki.Scripts.Camera;
+using System.Linq;
+using GameFramework.Event;
 
 
 
@@ -28,12 +31,15 @@ namespace Aki.Scripts.Entities
         // Entity挂载
         public Rigidbody rb;
         public Animator animator;
+        public Transform CameraParent;
         protected PlayerInputAction inputActions;
         public CharacterController characterController;
         protected PlayerInputAction.PlayerActions moveActions;
 
         // 玩家数据
         public UnityEngine.Camera m_Camera;
+        public CameraData cameraData;
+        private CameraControl cameraControl;
         public PlayerData playerData;
         protected IFsm<PlayerLogic> fsm;
         protected List<FsmState<PlayerLogic>> stateList;
@@ -54,7 +60,7 @@ namespace Aki.Scripts.Entities
             characterController = GetComponent<CharacterController>();
             rb                  = GetComponent<Rigidbody>();
         }
-
+        
         protected override void OnShow(object userData)
         {
             base.OnShow(userData);
@@ -64,12 +70,13 @@ namespace Aki.Scripts.Entities
                 Log.Error("Player data is invalid.");
                 return;
             }
+            ShowVirtualCamera();
             CreateFsm();
 
             inputActions.Enable();
             playerAnimationName.InitializeData();
             AddInputActionsCallbacks(); // 添加输入回调
-
+            
             if (stateList != null && animator != null)
             {
                 playerData.speedModifier = animator.GetFloat(playerAnimationName.speedParameterHash);
@@ -93,7 +100,7 @@ namespace Aki.Scripts.Entities
 
         private void LateUpdate()
         {
-            m_Camera.transform.position = new Vector3(transform.position.x, m_Camera.transform.position.y, transform.position.z); // 相机跟随
+            // m_Camera.transform.position = new Vector3(transform.position.x, m_Camera.transform.position.y, transform.position.z); // 相机跟随
         }
 
         protected override void OnHide(bool isShutdown, object userData)
@@ -108,13 +115,13 @@ namespace Aki.Scripts.Entities
             GameEntry.Fsm.DestroyFsm(fsm);
         }
 
-        protected virtual void AddFsmState()
+        protected void AddFsmState()
         {
             stateList.Add(PlayerIdleState.Create());
             stateList.Add(PlayerMoveState.Create());
         }
 
-        protected virtual void StartState()
+        protected void StartState()
         {
             fsm.Start<PlayerIdleState>();
         }
@@ -122,13 +129,35 @@ namespace Aki.Scripts.Entities
         /// <summary>
         /// 创建状态机
         /// </summary>
-        protected virtual void CreateFsm()
+        protected void CreateFsm()
         {
             AddFsmState();
             fsm = GameEntry.Fsm.CreateFsm<PlayerLogic>(gameObject.name, this, stateList.ToArray());
             StartState();
         }
+        /// <summary>
+        /// 显示虚拟相机成功
+        /// </summary>
+        private void OnShowVirtualCameraSuccess(object sender, GameEventArgs e)
+        {
+            ShowEntitySuccessEventArgs ne = (ShowEntitySuccessEventArgs) e;
+            if (ne.EntityLogicType != typeof(CameraControl))
+            {
+                return;
+            }
+            // GameEntry.Entity.AttachEntity(GameEntry.Entity.GetEntity(cameraData.entityId), this.Entity, CameraParent, cameraData);
+            cameraControl = GameEntry.Entity.GetEntity(cameraData.entityId).Logic as CameraControl;
+            cameraControl.SetTarget(CameraParent);
+        }
 
+        private void ShowVirtualCamera()
+        {
+            GameEntry.Event.Subscribe(ShowEntitySuccessEventArgs.EventId, OnShowVirtualCameraSuccess);
+            CameraParent = GameObject.Find("CameraRoot").transform;
+            cameraData = new CameraData(GameEntry.Entity.GenerateSerialId(), (int)EnumCamera.CameraPlayer);
+            
+            GameEntry.Entity.ShowEntity(cameraData, typeof(CameraControl));
+        }
         # region MoveState Function
         protected void ReadMovementInput()
         {

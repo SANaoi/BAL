@@ -1,7 +1,8 @@
+using UnityGameFramework.Runtime;
 
 namespace Aki.Scripts.Entities
 {
-    public class DefaultEntityLogic : UnityGameFramework.Runtime.EntityLogic
+    public class DefaultEntityLogic : EntityLogic
     {
         
     }
