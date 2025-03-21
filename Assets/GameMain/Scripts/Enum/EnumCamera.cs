@@ -1,10 +1,10 @@
 ﻿// 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2025-03-21 17:28:38.152
+// 生成时间：2025-03-21 17:28:38.153
 //------------------------------------------------------------
 
 namespace Aki
 {
-    public enum EnumEntity : int
+    public enum EnumCamera : int
     {
         /// <summary>
         /// 无
@@ -12,8 +12,8 @@ namespace Aki
         None = 0,
 
         /// <summary>
-        /// 玩家
+        /// 大厅人物相机
         /// </summary>
-        Player = 10000,
+        CameraPlayer = 2000,
     }
 }

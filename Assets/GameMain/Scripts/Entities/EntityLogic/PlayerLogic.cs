@@ -1,14 +1,13 @@
 using System.Collections.Generic;
-using Aki.Scripts.FSM;
 using GameFramework.Fsm;
 using UnityEngine;
-using Aki.Plugins;
 using UnityGameFramework.Runtime;
 using GameEntry = Aki.Scripts.Base.GameEntry;
-using System.Net.Security;
-using System;
 using UnityEngine.InputSystem;
+using Aki.Plugins;
+using Aki.Scripts.FSM;
 using Aki.Scripts.Definition.AnimationName;
+
 
 
 namespace Aki.Scripts.Entities
@@ -34,7 +33,7 @@ namespace Aki.Scripts.Entities
         protected PlayerInputAction.PlayerActions moveActions;
 
         // 玩家数据
-        public Camera m_Camera;
+        public UnityEngine.Camera m_Camera;
         public PlayerData playerData;
         protected IFsm<PlayerLogic> fsm;
         protected List<FsmState<PlayerLogic>> stateList;
@@ -44,7 +43,7 @@ namespace Aki.Scripts.Entities
         {
             base.OnInit(userData);
 
-            m_Camera            = Camera.main;
+            m_Camera            = UnityEngine.Camera.main;
             playerData          = userData as PlayerData;
             playerAnimationName = new PlayerAnimationName();
             stateList           = new List<FsmState<PlayerLogic>>();

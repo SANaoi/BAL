@@ -70,12 +70,12 @@ namespace Aki.Procedures
         {
             // LoadDataTable("SkillMessages");
             // LoadDataTable("Bullect");
-            // LoadDataTable("EnemyTank");
             LoadDataTable("Entity");
             // LoadDataTable("Sound");
             // LoadDataTable("Tools");
             LoadDataTable("Scene");
             LoadDataTable("UIForm");
+            LoadDataTable("Camera");
         }
 
         /// <summary>

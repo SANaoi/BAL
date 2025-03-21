@@ -18,6 +18,7 @@ namespace Aki
         private readonly static string[] GenerateDataTables = {
             "UIForm",
             "Entity",
+            "Camera",
             // "Item",
             // "Sound",
         };

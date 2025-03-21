@@ -76,7 +76,7 @@ namespace Aki.Scripts.UI
         {
             
             //打开过渡界面
-            GameEntry.UI.OpenUIForm(UIFormId.TransitionalForm);
+            GameEntry.UI.OpenUIForm(EnumUIForm.TransitionalForm);
             //设置下一场景名称
             GameEntry.DataNode.SetData<VarString>(Constant.ProcedureRunningData.NextSceneName, "Game");
             //可以切换流程了

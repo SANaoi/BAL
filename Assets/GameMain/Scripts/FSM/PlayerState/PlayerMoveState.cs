@@ -25,19 +25,19 @@ namespace Aki.Scripts.FSM
         protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
-            if (owner.playerMoveContext.y < 0)
-            {
-                owner.targetSpeedModifier = -2f;
-            }
-            else if (owner.playerMoveContext.y >= 0)
-            {
-                owner.targetSpeedModifier = 2f;
-            }
-            else
-            {
-                owner.targetSpeedModifier = 5f;
-            }
-            Log.Debug(owner.targetSpeedModifier);
+            // if (owner.playerMoveContext.y < 0)
+            // {
+            //     owner.targetSpeedModifier = -2f;
+            // }
+            // else if (owner.playerMoveContext.y >= 0)
+            // {
+            //     owner.targetSpeedModifier = 2f;
+            // }
+            // else
+            // {
+            //     owner.targetSpeedModifier = 5f;
+            // }
+            owner.targetSpeedModifier = 5f;
             owner.playerData.speedModifier = Mathf.Lerp(owner.playerData.speedModifier, owner.targetSpeedModifier, 3 * Time.deltaTime);
 
             //切换回空闲状态

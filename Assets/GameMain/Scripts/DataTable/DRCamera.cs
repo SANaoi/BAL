@@ -5,7 +5,7 @@
 // Feedback: mailto:ellan@gameframework.cn
 //------------------------------------------------------------
 // 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2025-03-21 18:55:37.718
+// 生成时间：2025-03-21 18:55:37.703
 //------------------------------------------------------------
 
 using GameFramework;
@@ -19,14 +19,14 @@ using UnityGameFramework.Runtime;
 namespace Aki.Scripts.DataTable
 {
     /// <summary>
-    /// 实体配置表。
+    /// 相机配置表。
     /// </summary>
-    public class DREntity : DataRowBase
+    public class DRCamera : DataRowBase
     {
         private int m_Id = 0;
 
         /// <summary>
-        /// 获取配置编号。
+        /// 获取相机编号。
         /// </summary>
         public override int Id
         {
@@ -46,27 +46,9 @@ namespace Aki.Scripts.DataTable
         }
 
         /// <summary>
-        /// 获取所处资源组名称。
+        /// 获取初始位置。
         /// </summary>
-        public string GroupName
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 获取tag标识。
-        /// </summary>
-        public string Tag
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// 获取对象池参数Id。
-        /// </summary>
-        public int PoolParamId
+        public Vector3 DefaultLocalPosition
         {
             get;
             private set;
@@ -85,9 +67,7 @@ namespace Aki.Scripts.DataTable
             m_Id = int.Parse(columnStrings[index++]);
             index++;
             AssetName = columnStrings[index++];
-            GroupName = columnStrings[index++];
-            Tag = columnStrings[index++];
-            PoolParamId = int.Parse(columnStrings[index++]);
+            DefaultLocalPosition = DataTableExtension.ParseVector3(columnStrings[index++]);
 
             GeneratePropertyArray();
             return true;
@@ -101,9 +81,7 @@ namespace Aki.Scripts.DataTable
                 {
                     m_Id = binaryReader.Read7BitEncodedInt32();
                     AssetName = binaryReader.ReadString();
-                    GroupName = binaryReader.ReadString();
-                    Tag = binaryReader.ReadString();
-                    PoolParamId = binaryReader.Read7BitEncodedInt32();
+                    DefaultLocalPosition = binaryReader.ReadVector3();
                 }
             }
 

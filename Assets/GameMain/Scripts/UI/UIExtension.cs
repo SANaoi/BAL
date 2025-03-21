@@ -17,7 +17,7 @@ namespace Aki.Scripts.UI
                 drUIForm.PauseCoveredUIForm, userData);
         }
 
-        public static int? OpenUIForm(this UIComponent uiComponent, UIFormId uiFormId, object userData = null)
+        public static int? OpenUIForm(this UIComponent uiComponent, EnumUIForm uiFormId, object userData = null)
         {
             return uiComponent.OpenUIForm((int) uiFormId, userData);
         }
@@ -25,7 +25,7 @@ namespace Aki.Scripts.UI
 
         public static void OpenDialog(this UIComponent uiComponent, DialogParams dialogParams)
         {
-            uiComponent.OpenUIForm(UIFormId.DialogForm, dialogParams);
+            uiComponent.OpenUIForm(EnumUIForm.DialogForm, dialogParams);
         }
     }
 
