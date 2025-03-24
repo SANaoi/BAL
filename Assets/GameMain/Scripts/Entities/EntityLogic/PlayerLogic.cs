@@ -10,6 +10,7 @@ using Aki.Scripts.Definition.AnimationName;
 using Aki.Scripts.Camera;
 using System.Linq;
 using GameFramework.Event;
+using UnityEditor.ShaderGraph.Internal;
 
 
 
@@ -86,7 +87,8 @@ namespace Aki.Scripts.Entities
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(elapseSeconds, realElapseSeconds);
-            PlayAnimation(playerAnimationName.speedParameterHash, playerData.speedModifier);
+            PlayAnimation(playerAnimationName.playerHorizontalVelocityHash, playerMoveContext.x);
+            PlayAnimation(playerAnimationName.playerVerticalVelocityHash, playerMoveContext.y);
             ReadMovementInput();
         }
 
@@ -165,22 +167,22 @@ namespace Aki.Scripts.Entities
         }
         protected void Move()
         {
-            if (movementInput == Vector2.zero || playerData.speedModifier == 0f) { return; }
+            // if (movementInput == Vector2.zero || playerData.speedModifier == 0f) { return; }
             Vector3 movementDirection = GetMovementInputDirection(); // 获取移动输入方向
 
-            float targetRotationYAngle = UpdateTargetRotation(movementDirection); // 更新目标旋转
+            // float targetRotationYAngle = UpdateTargetRotation(movementDirection); // 更新目标旋转
+// 
+            // Vector3 targetRotationDirection = GetTargetRotationDirection(targetRotationYAngle); // 获取目标旋转方向
+// 
+            // Vector3 currentPlayerHorizontalVelocity = GetPlayerHorizontalVelocity();// 获取玩家水平速度
+// 
+            // Vector3 tep = targetRotationDirection * playerData.speedModifier - currentPlayerHorizontalVelocity; // 目标速度减去当前速度
+            // Vector3 targetMoveDirection = new Vector3(tep.x, moveDirection.y, tep.z); // 目标移动方向
+            // RotateTowardsTargetRotation(); // 旋转到目标旋转
 
-            Vector3 targetRotationDirection = GetTargetRotationDirection(targetRotationYAngle); // 获取目标旋转方向
+            // moveDirection = Vector3.SmoothDamp(moveDirection, targetMoveDirection, ref moveVelocity, Time.deltaTime); // 平滑移动
 
-            Vector3 currentPlayerHorizontalVelocity = GetPlayerHorizontalVelocity();// 获取玩家水平速度
-
-            Vector3 tep = targetRotationDirection * playerData.speedModifier - currentPlayerHorizontalVelocity; // 目标速度减去当前速度
-            Vector3 targetMoveDirection = new Vector3(tep.x, moveDirection.y, tep.z); // 目标移动方向
-            RotateTowardsTargetRotation(); // 旋转到目标旋转
-
-            moveDirection = Vector3.SmoothDamp(moveDirection, targetMoveDirection, ref moveVelocity, Time.deltaTime); // 平滑移动
-
-            characterController.Move(moveDirection * Time.deltaTime); // 移动
+            characterController.Move(movementDirection * Time.deltaTime); // 移动
         }
 
         private Vector3 GetMovementInputDirection()
@@ -309,9 +311,9 @@ namespace Aki.Scripts.Entities
         #endregion
 
         #region Animation Function
-        public void PlayAnimation(int animationHash, float value)
+        public void PlayAnimation(int animationHash, float value, float dampvale = 0.1f)
         {
-            animator.SetFloat(animationHash, value);
+            animator.SetFloat(animationHash, value, dampvale, Time.deltaTime);
         }
 
         public void PlayAnimation(int animationHash)

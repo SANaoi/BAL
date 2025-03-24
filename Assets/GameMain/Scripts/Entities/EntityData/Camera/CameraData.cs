@@ -43,7 +43,6 @@ namespace Aki.Scripts.Entities
             GroupName = m_GroupData.GroupName;
             this.m_Id = entityId;
             this.m_TypeId = typeId;
-            Log.Info("CameraData: " + entityId + " " + typeId);
         }
 
     }

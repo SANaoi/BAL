@@ -38,7 +38,7 @@ namespace Aki.Scripts.FSM
             //     owner.targetSpeedModifier = 5f;
             // }
             owner.targetSpeedModifier = 5f;
-            owner.playerData.speedModifier = Mathf.Lerp(owner.playerData.speedModifier, owner.targetSpeedModifier, 3 * Time.deltaTime);
+            // owner.playerData.speedModifier = Mathf.Lerp(owner.playerData.speedModifier, owner.targetSpeedModifier, 3 * Time.deltaTime);
 
             //切换回空闲状态
             if (owner.playerMoveContext == Vector2.zero)

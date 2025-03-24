@@ -45,7 +45,7 @@ namespace Aki.Plugins
                     ""id"": ""a3265d19-66e4-4f66-8a15-c631690d3346"",
                     ""path"": ""2DVector"",
                     ""interactions"": """",
-                    ""processors"": """",
+                    ""processors"": ""ScaleVector2"",
                     ""groups"": """",
                     ""action"": ""Move"",
                     ""isComposite"": true,
