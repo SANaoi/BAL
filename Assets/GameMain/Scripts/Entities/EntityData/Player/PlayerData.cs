@@ -9,10 +9,9 @@ namespace Aki.Scripts.Entities
 {
     public class PlayerData : EntityData
     {
-        // 玩家移动属性
-        public float BaseSpeed = 2.0f;
-        public float targetSpeedModifier;
-        public float speedModifier = 0f;
+        //玩家不同状态的运动速度
+        public float walkSpeed = 2.5f;
+        public float runSpeed = 5.5f;
         public PlayerData(int entityId, int typeId) : base(entityId, typeId)
         {
             IDataTable<DREntity> m_GroupTable = GameEntry.DataTable.GetDataTable<DREntity>();

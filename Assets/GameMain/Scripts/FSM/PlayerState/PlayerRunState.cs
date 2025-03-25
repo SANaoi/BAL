@@ -1,13 +1,13 @@
-using Aki.Scripts.Entities;
 using GameFramework;
 using GameFramework.Fsm;
-using UnityEngine;
+using Aki.Scripts.Entities;
 using UnityGameFramework.Runtime;
 using ProcedureOwner = GameFramework.Fsm.IFsm<Aki.Scripts.Entities.PlayerLogic>;
+using UnityEngine;
 
 namespace Aki.Scripts.FSM
 {
-    public class PlayerIdleState : FsmState<PlayerLogic>, IReference
+    public class PlayerRunState : FsmState<PlayerLogic>, IReference
     {
         private PlayerLogic owner;
 
@@ -15,42 +15,37 @@ namespace Aki.Scripts.FSM
         {
             base.OnInit(procedureOwner);
         }
-
         protected override void OnEnter(ProcedureOwner procedureOwner)
         {
             base.OnEnter(procedureOwner);
-            Log.Debug("进入Idle状态");
             owner = procedureOwner.Owner;
+            Log.Debug("进入Run状态");
         }
 
         protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(procedureOwner, elapseSeconds, realElapseSeconds);
-            
-            owner.PlayAnimation(owner.playerAnimationName.playerHorizontalVelocityHash, 0f);
 
+            owner.PlayAnimation(owner.playerAnimationName.playerHorizontalVelocityHash, owner.playerMovement.magnitude * owner.playerData.runSpeed);
+
+            //切换回空闲状态
             if (owner.playerMoveInput == Vector2.zero)
             {
-                return;
+                ChangeState<PlayerIdleState>(procedureOwner);
             }
-            //切换到移动状态
-            ChangeState<PlayerMoveState>(procedureOwner);
-            return;
+            else if (!owner.isRunning && owner.playerMoveInput != Vector2.zero)
+            {
+                ChangeState<PlayerMoveState>(procedureOwner);
+            }
         }
 
         protected override void OnLeave(ProcedureOwner procedureOwner, bool isShutdown)
         {
             base.OnLeave(procedureOwner, isShutdown);
         }
-
-        protected override void OnDestroy(ProcedureOwner procedureOwner)
+        public static PlayerRunState Create()
         {
-            base.OnDestroy(procedureOwner);
-        }
-
-        public static PlayerIdleState Create()
-        {
-            PlayerIdleState state = ReferencePool.Acquire<PlayerIdleState>();
+            PlayerRunState state = ReferencePool.Acquire<PlayerRunState>();
             return state;
         }
 
