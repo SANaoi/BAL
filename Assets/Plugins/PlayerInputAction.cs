@@ -46,6 +46,15 @@ namespace Aki.Plugins
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ScrollWheel"",
+                    ""type"": ""Value"",
+                    ""id"": ""7ff44570-a059-4dc4-9206-de2d020fcd2c"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": ""Clamp(min=-1,max=1)"",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -114,6 +123,17 @@ namespace Aki.Plugins
                     ""action"": ""Run"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""984cdf8a-c8ce-429b-a1e8-0c833493a262"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": ""Invert"",
+                    ""groups"": """",
+                    ""action"": ""ScrollWheel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -124,6 +144,7 @@ namespace Aki.Plugins
             m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
             m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
             m_Player_Run = m_Player.FindAction("Run", throwIfNotFound: true);
+            m_Player_ScrollWheel = m_Player.FindAction("ScrollWheel", throwIfNotFound: true);
         }
 
         ~@PlayerInputAction()
@@ -192,12 +213,14 @@ namespace Aki.Plugins
         private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
         private readonly InputAction m_Player_Move;
         private readonly InputAction m_Player_Run;
+        private readonly InputAction m_Player_ScrollWheel;
         public struct PlayerActions
         {
             private @PlayerInputAction m_Wrapper;
             public PlayerActions(@PlayerInputAction wrapper) { m_Wrapper = wrapper; }
             public InputAction @Move => m_Wrapper.m_Player_Move;
             public InputAction @Run => m_Wrapper.m_Player_Run;
+            public InputAction @ScrollWheel => m_Wrapper.m_Player_ScrollWheel;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -213,6 +236,9 @@ namespace Aki.Plugins
                 @Run.started += instance.OnRun;
                 @Run.performed += instance.OnRun;
                 @Run.canceled += instance.OnRun;
+                @ScrollWheel.started += instance.OnScrollWheel;
+                @ScrollWheel.performed += instance.OnScrollWheel;
+                @ScrollWheel.canceled += instance.OnScrollWheel;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -223,6 +249,9 @@ namespace Aki.Plugins
                 @Run.started -= instance.OnRun;
                 @Run.performed -= instance.OnRun;
                 @Run.canceled -= instance.OnRun;
+                @ScrollWheel.started -= instance.OnScrollWheel;
+                @ScrollWheel.performed -= instance.OnScrollWheel;
+                @ScrollWheel.canceled -= instance.OnScrollWheel;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -244,6 +273,7 @@ namespace Aki.Plugins
         {
             void OnMove(InputAction.CallbackContext context);
             void OnRun(InputAction.CallbackContext context);
+            void OnScrollWheel(InputAction.CallbackContext context);
         }
     }
 }

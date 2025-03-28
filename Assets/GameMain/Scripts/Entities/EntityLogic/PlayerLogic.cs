@@ -150,6 +150,12 @@ namespace Aki.Scripts.Entities
             
             GameEntry.Entity.ShowEntity(cameraData, typeof(CameraControl));
         }
+
+        // private void OnAnimatorMove()
+        // {
+        //     transform.position += animator.deltaPosition;
+        //     transform.rotation *= animator.deltaRotation;
+        // }
         #region Move Function
         
         /// <summary>

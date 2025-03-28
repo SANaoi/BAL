@@ -6,7 +6,6 @@ namespace Aki.Scripts.Definition.AnimationName
     public class PlayerAnimationName
     {
         [Header("Animation参数命名")]
-        [SerializeField] private string SpeedParameterName = "Speed";
         [SerializeField] private string IsRunningParameterName = "isRunning";
         [SerializeField] private string PlayerHorizontalVelocity = "x";
         [SerializeField] private string PlayerVerticalVelocity = "y";

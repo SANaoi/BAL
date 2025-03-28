@@ -1,22 +1,41 @@
 using UnityEngine;
 using Cinemachine;
 using Aki.Scripts.Entities;
-using Unity.IO.LowLevel.Unsafe;
 
 namespace Aki.Scripts.Camera
 {
     public class CameraControl : DefaultEntityLogic
     {
-        private CameraData cameraData;
         public Transform target;
-        private CinemachineVirtualCamera virtualCamera;
+
+        CameraData cameraData;
+        CinemachineVirtualCamera virtualCamera;
+        CinemachineFramingTransposer framingTransposer;
+        CinemachineInputProvider inputProvider;
+        float targetDistance;
+
+        [SerializeField][Range(0f, 10f)] private float defaultDistance = 2f;
+        [SerializeField][Range(0f, 10f)] private float minimumDistance = 1f;
+        [SerializeField][Range(0f, 10f)] private float maximumDistance = 4f;
+        [SerializeField][Range(0f, 10f)] private float smoothing = 4f;
+        [SerializeField][Range(0f, 10f)] private float zoomSensitivity = 1f;
 
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
 
-            cameraData      = userData as CameraData;
-            virtualCamera   = GetComponent<CinemachineVirtualCamera>();
+            cameraData = userData as CameraData;
+            virtualCamera = GetComponent<CinemachineVirtualCamera>();
+            framingTransposer = GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineFramingTransposer>();
+            inputProvider = GetComponent<CinemachineInputProvider>();
+
+            targetDistance = defaultDistance;
+        }
+
+        protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
+        {
+            base.OnUpdate(elapseSeconds, realElapseSeconds);
+            ScrollWheel();
         }
 
         public void SetTarget(Transform target)
@@ -25,7 +44,24 @@ namespace Aki.Scripts.Camera
             virtualCamera.Follow = target;
             virtualCamera.LookAt = target;
             target.position = cameraData.DefaultLocalPosition;
+        }
 
+        void ScrollWheel()
+        {
+            var scrollValue = inputProvider.GetAxisValue(2) * zoomSensitivity;
+            Debug.Log(scrollValue);
+            float currentDistance = framingTransposer.m_CameraDistance;
+
+            targetDistance = Mathf.Clamp(targetDistance + scrollValue, minimumDistance, maximumDistance);
+
+            if (currentDistance == targetDistance)
+            {
+                return;
+            }
+
+            float lerpedZoomValue = Mathf.Lerp(currentDistance, targetDistance, smoothing * Time.deltaTime);
+    
+            framingTransposer.m_CameraDistance = lerpedZoomValue;
         }
     }
 }
