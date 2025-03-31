@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &246895554739621179
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3781765043379989371}
+  - component: {fileID: 6346002519297228935}
+  - component: {fileID: 598378617986383116}
+  m_Layer: 5
+  m_Name: UIAIChatForm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &3781765043379989371
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 246895554739621179}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &6346002519297228935
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 246895554739621179}
+  m_CullTransparentMesh: 1
+--- !u!114 &598378617986383116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 246895554739621179}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0aa33dddf946a9446bdd3701582687d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ChatSettings:
+    m_ChatModel: {fileID: 0}
+    m_TextToSpeech: {fileID: 0}
+    m_SpeechToText: {fileID: 0}
+  m_ChatPanel: {fileID: 0}
+  m_InputWord: {fileID: 0}
+  m_TextBack: {fileID: 0}
+  m_AudioSource: {fileID: 0}
+  m_CommitMsgBtn: {fileID: 0}
+  m_Animator: {fileID: 0}
+  m_IsVoiceMode: 1
+  m_CreateVoiceMode: 0
+  m_AutoSend: 1
+  m_VoiceInputBotton: {fileID: 0}
+  m_VoiceBottonText: {fileID: 0}
+  m_RecordTips: {fileID: 0}
+  m_ChatHistory: []
+  m_TempChatBox: []
+  m_HistoryPanel: {fileID: 0}
+  m_rootTrans: {fileID: 0}
+  m_PostChatPrefab: {fileID: 0}
+  m_RobotChatPrefab: {fileID: 0}
+  m_ScroTectObject: {fileID: 0}
+  m_WordWaitTime: 0.2
+  m_WriteState: 0

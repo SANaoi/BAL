@@ -32,10 +32,18 @@ namespace Aki.Scripts.Utility
         {
             return GameFramework.Utility.Text.Format("Assets/GameMain/Entity/{0}.prefab", assetName);
         }
+        public static string GetEntityAsset(string assetName, string assetfolder)
+        {
+            return GameFramework.Utility.Text.Format("Assets/GameMain/Entity/{0}/{1}.prefab", assetfolder, assetName);
+        }
 
         public static string GetUIFormAsset(string assetName)
         {
             return GameFramework.Utility.Text.Format("Assets/GameMain/UI/UIForms/{0}.prefab", assetName);
+        }
+        public static string GetUIFormAsset(string assetName, string assetfolder)
+        {
+            return GameFramework.Utility.Text.Format("Assets/GameMain/UI/UIForms/{0}/{1}.prefab", assetfolder, assetName);
         }
 
         public static string GetSpriteAsset()
