@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Aki.Scripts.UI
 {
-        public class LLM : MonoBehaviour
+    public class LLM : MonoBehaviour
     {
         /// <summary>
         /// api地址
@@ -21,7 +21,7 @@ namespace Aki.Scripts.UI
         /// 语言
         /// </summary
         [Header("设置回复的语言")]
-        [SerializeField] protected string lan="中文";
+        [SerializeField] protected string lan = "中文";
         /// <summary>
         /// 上下文保留条数
         /// </summary>
@@ -34,11 +34,12 @@ namespace Aki.Scripts.UI
         /// <summary>
         /// 计算方法调用的时间
         /// </summary>
-        [SerializeField] protected Stopwatch stopwatch=new Stopwatch();
+        [SerializeField] protected Stopwatch stopwatch = new Stopwatch();
         /// <summary>
         /// 发送消息
         /// </summary>
-        public virtual void PostMsg(string _msg,Action<string> _callback) {
+        public virtual void PostMsg(string _msg, Action<string> _callback)
+        {
             //上下文条数设置
             CheckHistory();
             //提示词处理
@@ -52,10 +53,10 @@ namespace Aki.Scripts.UI
             StartCoroutine(Request(message, _callback));
         }
 
-        public virtual IEnumerator Request(string _postWord, System.Action<string> _callback)
+        public virtual IEnumerator Request(string _postWord, Action<string> _callback)
         {
             yield return new WaitForEndOfFrame();
-            
+            UnityEngine.Debug.Log("Requset");
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace Aki.Scripts.UI
         /// </summary>
         public virtual void CheckHistory()
         {
-            if(m_DataList.Count> m_HistoryKeepCount)
+            if (m_DataList.Count > m_HistoryKeepCount)
             {
                 m_DataList.RemoveAt(0);
             }

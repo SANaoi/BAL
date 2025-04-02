@@ -7,15 +7,12 @@ using UnityGameFramework.Runtime;
 
 namespace Aki.Scripts.UI
 {
-    public class UIAIChatForm : UGuiForm
+    public class UIAIChatForm : MonoBehaviour
     {
-        protected override void OnInit(object userData)
+        private void Start()
         {
-            base.OnInit(userData);
-
             m_CommitMsgBtn.onClick.AddListener(SendData);
             RegistButtonEvent();
-            
         }
 
     #region UI定义
@@ -67,10 +64,10 @@ namespace Aki.Scripts.UI
         /// </summary>
         private void SendData()
         {
-            if (m_InputWord.text.Equals(""))
-            {
-                return;
-            }
+            // if (m_InputWord.text.Equals(""))
+            // {
+            //     return;
+            // }
 
             if (m_CreateVoiceMode) //  合成输入为语音
             {
@@ -80,7 +77,7 @@ namespace Aki.Scripts.UI
             }
             
             //添加记录聊天
-            m_ChatHistory.Add(m_InputWord.text);
+            // m_ChatHistory.Add(m_InputWord.text);
             //提示词
             string _msg = m_InputWord.text;
 
@@ -92,40 +89,40 @@ namespace Aki.Scripts.UI
             m_TextBack.text = "正在思考中...";
 
             //切换思考动作
-            SetAnimator("state", 1);
+            // SetAnimator("state", 1);
         }
         /// <summary>
         /// 带文字发送
         /// </summary>
         /// <param name="_postWord"></param>
-        public void SendData(string _postWord)
-        {
-            if (_postWord.Equals(""))
-                return;
+        // public void SendData(string _postWord)
+        // {
+        //     if (_postWord.Equals(""))
+        //         return;
 
-            if (m_CreateVoiceMode)//合成输入为语音
-            {
-                CallBack(_postWord);
-                m_InputWord.text = "";
-                return;
-            }
+        //     if (m_CreateVoiceMode)//合成输入为语音
+        //     {
+        //         CallBack(_postWord);
+        //         m_InputWord.text = "";
+        //         return;
+        //     }
 
 
-            //添加记录聊天
-            m_ChatHistory.Add(_postWord);
-            //提示词
-            string _msg = _postWord;
+        //     //添加记录聊天
+        //     m_ChatHistory.Add(_postWord);
+        //     //提示词
+        //     string _msg = _postWord;
 
-            //发送数据
-            // TODO
-            m_ChatSettings.m_ChatModel.PostMsg(_msg, CallBack);
+        //     //发送数据
+        //     // TODO
+        //     m_ChatSettings.m_ChatModel.PostMsg(_msg, CallBack);
 
-            m_InputWord.text = "";
-            m_TextBack.text = "正在思考中...";
+        //     m_InputWord.text = "";
+        //     m_TextBack.text = "正在思考中...";
 
-            //切换思考动作
-            SetAnimator("state", 1);
-        }
+        //     //切换思考动作
+        //     SetAnimator("state", 1);
+        // }
 
         /// <summary>
         /// AI回复的信息的回调
@@ -253,7 +250,7 @@ namespace Aki.Scripts.UI
             //自动发送
             if (m_AutoSend)
             {
-                SendData(_msg);
+                // SendData(_msg);
                 return;
             }
 
