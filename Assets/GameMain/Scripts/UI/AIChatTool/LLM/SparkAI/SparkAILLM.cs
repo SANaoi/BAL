@@ -15,10 +15,6 @@ namespace Aki.Scripts.UI
 {
     public class SparkAILLM : LLM
     {
-        /// <summary>
-        /// 发送按钮
-        /// </summary>
-        public Button m_CommitMsgBtn;
         [SerializeField] private const string m_appid = "064b0378";
         [SerializeField] private const string api_secret = "MjNhM2FhYzY0OWQ5ZGM5MjJkZjdkNjFh";
         [SerializeField] private const string api_key = "98989f21fb7430bf845fc191784b70fd";
@@ -38,15 +34,7 @@ namespace Aki.Scripts.UI
         {
             // base.Request(_postWord, _callback);
             yield return null;
-            Tasker(_postWord, CallBack);
-        }
-        /// <summary>
-        /// AI回复的信息的回调
-        /// </summary>
-        /// <param name="_response"></param>
-        private void CallBack(string _response)
-        {
-            UnityEngine.Debug.Log(_response);
+            Tasker(_postWord, _callback);
         }
         public async void Tasker(string _msg , Action<string> _callback)
         {
@@ -121,7 +109,7 @@ namespace Aki.Scripts.UI
                             m_DataList.Add(new SendData("assistant", _callBackMessage));
 
                             //回调
-                            _callback(_callBackMessage);
+                            _callback?.Invoke(_callBackMessage);
                             m_webSocket.Abort();
                             break;
                         }

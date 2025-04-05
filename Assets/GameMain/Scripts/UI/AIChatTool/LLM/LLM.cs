@@ -56,7 +56,6 @@ namespace Aki.Scripts.UI
         public virtual IEnumerator Request(string _postWord, Action<string> _callback)
         {
             yield return new WaitForEndOfFrame();
-            UnityEngine.Debug.Log("Requset");
         }
 
         /// <summary>

@@ -64,10 +64,10 @@ namespace Aki.Scripts.UI
         /// </summary>
         private void SendData()
         {
-            // if (m_InputWord.text.Equals(""))
-            // {
-            //     return;
-            // }
+            if (m_InputWord.text.Equals(""))
+            {
+                return;
+            }
 
             if (m_CreateVoiceMode) //  合成输入为语音
             {
@@ -77,7 +77,7 @@ namespace Aki.Scripts.UI
             }
             
             //添加记录聊天
-            // m_ChatHistory.Add(m_InputWord.text);
+            m_ChatHistory.Add(m_InputWord.text);
             //提示词
             string _msg = m_InputWord.text;
 
@@ -128,7 +128,7 @@ namespace Aki.Scripts.UI
         /// AI回复的信息的回调
         /// </summary>
         /// <param name="_response"></param>
-        private void CallBack(string _response)
+        protected virtual void CallBack(string _response)
         {
             _response = _response.Trim();
             m_TextBack.text = "";
@@ -267,7 +267,7 @@ namespace Aki.Scripts.UI
 
     #region 语音合成
 
-        private void PlayVoice(AudioClip _clip, string _response)
+    private void PlayVoice(AudioClip _clip, string _response)
     {
         m_AudioSource.clip = _clip;
         m_AudioSource.Play();
@@ -275,7 +275,7 @@ namespace Aki.Scripts.UI
         //开始逐个显示返回的文本
         StartTypeWords(_response);
         //切换到说话动作
-        SetAnimator("state", 2);
+        // SetAnimator("state", 2);
     }
 
     #endregion
