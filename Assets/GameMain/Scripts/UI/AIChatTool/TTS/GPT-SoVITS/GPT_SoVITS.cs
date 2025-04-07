@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -97,6 +98,7 @@ namespace Aki.Scripts.UI
                 ref_audio_path = m_Audio2Path,
                 prompt_text = m_ReferenceText,
                 prompt_lang = promptLang,
+                text_split_method = "cut2"
             };
 
             return JsonConvert.SerializeObject(data);

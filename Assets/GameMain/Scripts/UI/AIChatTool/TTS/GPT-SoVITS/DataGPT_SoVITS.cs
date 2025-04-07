@@ -21,7 +21,7 @@ namespace Aki.Scripts.UI
         public int top_k = 5; // [默认5] Top-K采样值，影响生成多样性
         public float top_p = 1.0f; // [默认1.0] Top-P采样概率阈值
         public float temperature = 1.0f; // [默认1.0] 温度参数控制随机性
-        public string text_split_method = "cut0"; // [默认cut0] 文本分段处理方法
+        public string text_split_method = "cut2"; // [默认cut0] 文本分段处理方法
         public int batch_size = 1; // [默认1] 批处理大小
         public float batch_threshold = 0.75f; // [默认0.75] 批处理分割阈值
         public bool split_bucket = true; // [默认true] 是否将批处理分割为多个桶

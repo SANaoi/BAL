@@ -1,15 +1,16 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using UnityEngine;
-using UnityEngine.UI;
 using Newtonsoft.Json;
 
 using static Aki.Scripts.UI.DataSparkAI;
-using System.Collections;
+using Aki.Scripts.Definition.Constant;
+using System.Threading.Tasks;
+using UnityGameFramework.Runtime;
 
 namespace Aki.Scripts.UI
 {
@@ -21,6 +22,9 @@ namespace Aki.Scripts.UI
         private static string hostUrl = "https://spark-api.xf-yun.com/v1.1/chat";
         private ClientWebSocket m_webSocket;
         private CancellationToken m_cancellation;
+
+        int MAX_PROCESS_PER_FRAME = 5; // 每帧最大处理量
+
         /// <summary>
         /// 发送消息
         /// </summary>
@@ -32,16 +36,48 @@ namespace Aki.Scripts.UI
 
         public override IEnumerator Request(string _postWord, Action<string> _callback)
         {
-            // base.Request(_postWord, _callback);
-            yield return null;
-            Tasker(_postWord, _callback);
+            yield return StartCoroutine(TaskerCoroutine(_postWord, _callback));
+
+            while (Constant.ChatData.IsChatting)
+            {
+                int processedCount = 0;
+
+                while (m_tempResponse.TryDequeue(out var data)
+                        && processedCount < MAX_PROCESS_PER_FRAME)
+                {
+                    string textChunk = textStreamProcessor.ReceiveTextChunk(data);
+                    Log.Debug("textChunk-----------" + data);
+                    if (textChunk != null)
+                    {
+                        _callback?.Invoke(textChunk);
+                    }
+                    processedCount++;
+
+                }
+                yield return null;
+            }
+            
+            // 终末清理（可选添加超时阈值）
+            var finalRemaining = textStreamProcessor.ForceFlush();
+            if (!string.IsNullOrEmpty(finalRemaining))
+            {
+                _callback?.Invoke(finalRemaining);
+            }
         }
-        public async void Tasker(string _msg , Action<string> _callback)
+
+        private IEnumerator TaskerCoroutine(string _postWord, Action<string> _callback)
+        {
+            Task task = Tasker(_postWord, _callback);
+            while (!task.IsCompleted)
+            {
+                yield return null;
+            }
+        }
+        public async Task Tasker(string _postWord, Action<string> _callback)
         {
             try
             {
                 stopwatch.Restart();
-
                 m_webSocket = new ClientWebSocket();
                 m_cancellation = new CancellationToken();
 
@@ -51,7 +87,7 @@ namespace Aki.Scripts.UI
 
                 await m_webSocket.ConnectAsync(uri, m_cancellation);
 
-                JsonRequest request = SendJsonContent(_msg);
+                JsonRequest request = SendJsonContent(_postWord);
 
                 string jsonString = JsonConvert.SerializeObject(request); ;
 
@@ -77,39 +113,37 @@ namespace Aki.Scripts.UI
                     if (str.EndsWith("}"))
                     {
                         //获取返回的数据
-                        UnityEngine.Debug.Log(sb);
-
                         ResponseData _responseData = JsonUtility.FromJson<ResponseData>(sb.ToString());
-                        UnityEngine.Debug.Log(_responseData);
                         sb.Clear();
 
                         if (_responseData.header.code != 0)
                         {
                             //返回错误
-                            UnityEngine.Debug.Log("错误码：" + _responseData.header.code);
+                            Debug.Log("错误码：" + _responseData.header.code);
                             m_webSocket.Abort();
                             break;
                         }
                         //没有回复数据
                         if (_responseData.payload.choices.text.Count == 0)
                         {
-                            UnityEngine.Debug.LogError("没有获取到回复的信息！");
+                            Debug.LogError("没有获取到回复的信息！");
                             m_webSocket.Abort();
                             break;
                         }
                         //拼接回复的数据
                         _callBackMessage += _responseData.payload.choices.text[0].content;
+                        m_tempResponse.Enqueue(_responseData.payload.choices.text[0].content);
 
                         if (_responseData.payload.choices.status == 2)
                         {
                             stopwatch.Stop();
-                            UnityEngine.Debug.Log("ChatSpark耗时: " + stopwatch.Elapsed.TotalSeconds);
+                            Debug.Log("ChatSpark耗时: " + stopwatch.Elapsed.TotalSeconds);
 
-                            //添加记录
+                            Constant.ChatData.IsChatting = false;
+
+                            //获取到完整的回复 添加记录 
                             m_DataList.Add(new SendData("assistant", _callBackMessage));
 
-                            //回调
-                            _callback?.Invoke(_callBackMessage);
                             m_webSocket.Abort();
                             break;
                         }
@@ -118,9 +152,14 @@ namespace Aki.Scripts.UI
             }
             catch (Exception e)
             {
-                UnityEngine.Debug.LogError("报错信息: " + e.Message);
+                Debug.LogError("报错信息: " + e.Message);
                 m_webSocket.Dispose();
             }
+        }
+
+        IEnumerator StartCallback(Action<string> callback)
+        {
+            yield return null;
         }
         private string GetAuthUrl()
         {

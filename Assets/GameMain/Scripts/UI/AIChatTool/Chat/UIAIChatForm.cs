@@ -5,6 +5,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityGameFramework.Runtime;
 
+using Aki.Scripts.Definition.Constant;
+
 namespace Aki.Scripts.UI
 {
     public class UIAIChatForm : MonoBehaviour
@@ -55,6 +57,11 @@ namespace Aki.Scripts.UI
         [Header("勾选则不发送LLM, 直接合成输入文字")]
         [SerializeField] private bool m_CreateVoiceMode = false;
 
+        /// <summary>
+        /// 语音合成的音频缓存列表
+        /// </summary>
+        private Queue<AudioClip> playbackQueue = new Queue<AudioClip>();
+
     #endregion
 
     #region 消息发送
@@ -75,6 +82,8 @@ namespace Aki.Scripts.UI
                 m_InputWord.text = "";
                 return;
             }
+            //判断是否在聊天中
+            Constant.ChatData.IsChatting = true;
             
             //添加记录聊天
             m_ChatHistory.Add(m_InputWord.text);
@@ -82,50 +91,16 @@ namespace Aki.Scripts.UI
             string _msg = m_InputWord.text;
 
             //发送数据
-            // TODO
             m_ChatSettings.m_ChatModel.PostMsg(_msg, CallBack);
 
             m_InputWord.text = "";
             m_TextBack.text = "正在思考中...";
 
             //切换思考动作
-            // SetAnimator("state", 1);
         }
-        /// <summary>
-        /// 带文字发送
-        /// </summary>
-        /// <param name="_postWord"></param>
-        // public void SendData(string _postWord)
-        // {
-        //     if (_postWord.Equals(""))
-        //         return;
-
-        //     if (m_CreateVoiceMode)//合成输入为语音
-        //     {
-        //         CallBack(_postWord);
-        //         m_InputWord.text = "";
-        //         return;
-        //     }
-
-
-        //     //添加记录聊天
-        //     m_ChatHistory.Add(_postWord);
-        //     //提示词
-        //     string _msg = _postWord;
-
-        //     //发送数据
-        //     // TODO
-        //     m_ChatSettings.m_ChatModel.PostMsg(_msg, CallBack);
-
-        //     m_InputWord.text = "";
-        //     m_TextBack.text = "正在思考中...";
-
-        //     //切换思考动作
-        //     SetAnimator("state", 1);
-        // }
 
         /// <summary>
-        /// AI回复的信息的回调
+        /// AI回复的信息的回调  
         /// </summary>
         /// <param name="_response"></param>
         protected virtual void CallBack(string _response)
@@ -269,15 +244,34 @@ namespace Aki.Scripts.UI
 
     private void PlayVoice(AudioClip _clip, string _response)
     {
-        m_AudioSource.clip = _clip;
-        m_AudioSource.Play();
-        Debug.Log("音频时长：" + _clip.length);
-        //开始逐个显示返回的文本
         StartTypeWords(_response);
-        //切换到说话动作
-        // SetAnimator("state", 2);
+        EnqueueClip(_clip);
+        Debug.Log("音频时长："+_response +"---"+ _clip.length);
+        //开始逐个显示返回的文本
     }
 
+    private void EnqueueClip(AudioClip _clip)
+    {
+        playbackQueue.Enqueue(_clip);
+        if (!Constant.ChatData.IsSpeaking)
+        {
+            StartCoroutine(PlayQueueCoroutine());
+        }
+    }
+
+    private IEnumerator PlayQueueCoroutine()
+    {
+        Constant.ChatData.IsSpeaking = true;
+        while (playbackQueue.Count > 0)
+        {
+            AudioClip clip = playbackQueue.Dequeue();
+            m_AudioSource.clip = clip;
+            m_AudioSource.Play();
+
+            yield return new WaitForSeconds(clip.length);
+        }
+        Constant.ChatData.IsSpeaking = false;
+    }
     #endregion
 
     #region 聊天记录
@@ -395,8 +389,6 @@ namespace Aki.Scripts.UI
             }
 
             //切换到等待动作
-            // TODO 切换动画
-            SetAnimator("state",0);
         }
     #endregion
         private void SetAnimator(string _para,int _value)

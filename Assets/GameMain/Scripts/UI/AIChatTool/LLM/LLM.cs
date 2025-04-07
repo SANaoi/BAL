@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
@@ -35,6 +36,14 @@ namespace Aki.Scripts.UI
         /// 计算方法调用的时间
         /// </summary>
         [SerializeField] protected Stopwatch stopwatch = new Stopwatch();
+
+        /// <summary>
+        /// 临时存放分割的回复
+        /// </summary>
+        protected ConcurrentQueue<string> m_tempResponse = new ConcurrentQueue<string>();
+
+        protected TextStreamProcessor textStreamProcessor = new TextStreamProcessor();
+
         /// <summary>
         /// 发送消息
         /// </summary>
