@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 using static Aki.Scripts.UI.DataSparkAI;
 using Aki.Scripts.Definition.Constant;
 using System.Threading.Tasks;
-using UnityGameFramework.Runtime;
 
 namespace Aki.Scripts.UI
 {
@@ -22,8 +21,6 @@ namespace Aki.Scripts.UI
         private static string hostUrl = "https://spark-api.xf-yun.com/v1.1/chat";
         private ClientWebSocket m_webSocket;
         private CancellationToken m_cancellation;
-
-        int MAX_PROCESS_PER_FRAME = 5; // 每帧最大处理量
 
         /// <summary>
         /// 发送消息
@@ -40,28 +37,17 @@ namespace Aki.Scripts.UI
 
             while (Constant.ChatData.IsChatting)
             {
-                int processedCount = 0;
-
-                while (m_tempResponse.TryDequeue(out var data)
-                        && processedCount < MAX_PROCESS_PER_FRAME)
+                while (m_tempResponse.TryDequeue(out string data))
                 {
-                    string textChunk = textStreamProcessor.ReceiveTextChunk(data);
-                    Log.Debug("textChunk-----------" + data);
-                    if (textChunk != null)
-                    {
-                        _callback?.Invoke(textChunk);
-                    }
-                    processedCount++;
-
+                    _callback?.Invoke(data);
                 }
                 yield return null;
             }
-            
-            // 终末清理（可选添加超时阈值）
-            var finalRemaining = textStreamProcessor.ForceFlush();
-            if (!string.IsNullOrEmpty(finalRemaining))
+
+            // 清理残留数据
+            while (m_tempResponse.TryDequeue(out var data))
             {
-                _callback?.Invoke(finalRemaining);
+                _callback?.Invoke(data);
             }
         }
 
@@ -133,7 +119,6 @@ namespace Aki.Scripts.UI
                         //拼接回复的数据
                         _callBackMessage += _responseData.payload.choices.text[0].content;
                         m_tempResponse.Enqueue(_responseData.payload.choices.text[0].content);
-
                         if (_responseData.payload.choices.status == 2)
                         {
                             stopwatch.Stop();

@@ -20,7 +20,7 @@ namespace Aki.Scripts.UI
         {
             int cutPosition = -1;
 
-            // 查找最近的停顿符号位置
+            // 查找最后的停顿符号位置
             for (int i = 0; i < textBuffer.Length; i++)
             {
                 if (IsPunctuation(textBuffer[i]))
@@ -30,7 +30,6 @@ namespace Aki.Scripts.UI
             }
 
             // 发现完整语句则切割输出
-
             if (cutPosition != -1)
             {
                 string completeSentence = textBuffer.ToString(0, cutPosition);

@@ -62,6 +62,11 @@ namespace Aki.Scripts.UI
         /// </summary>
         private Queue<AudioClip> playbackQueue = new Queue<AudioClip>();
 
+        /// <summary>
+        /// 语音合成的文本流处理类
+        /// </summary>
+        protected TextStreamProcessor textStreamProcessor = new TextStreamProcessor();
+
     #endregion
 
     #region 消息发送
@@ -106,9 +111,18 @@ namespace Aki.Scripts.UI
         protected virtual void CallBack(string _response)
         {
             _response = _response.Trim();
+            string textChunk = textStreamProcessor.ReceiveTextChunk(_response);
+            if (textChunk != null)
+            {
+                _response = textChunk;
+            }
+            else
+            {
+                return;
+            }
             m_TextBack.text = "";
 
-            Log.Info("收到AI回复: "+ _response);
+            Debug.Log("收到AI回复: "+ _response);
             
             //记录聊天
             m_ChatHistory.Add(_response);

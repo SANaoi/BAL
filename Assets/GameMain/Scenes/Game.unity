@@ -865,17 +865,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 2911736426955009642, guid: 056ac69c12d75154c8a1712b4b532882, type: 3}
---- !u!114 &759909826 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2914800853650681429, guid: c123adc95aea7fa4b8fe1e77e292cae6, type: 3}
-  m_PrefabInstance: {fileID: 1214288779}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &784619851
 GameObject:
   m_ObjectHideFlags: 0
@@ -1480,17 +1469,13 @@ PrefabInstance:
       value: UIAIChatForm
       objectReference: {fileID: 0}
     - target: {fileID: 598378617986383116, guid: c123adc95aea7fa4b8fe1e77e292cae6, type: 3}
-      propertyPath: m_AutoSend
-      value: 0
-      objectReference: {fileID: 0}
+      propertyPath: m_AudioSource
+      value: 
+      objectReference: {fileID: 1686295293}
     - target: {fileID: 598378617986383116, guid: c123adc95aea7fa4b8fe1e77e292cae6, type: 3}
       propertyPath: m_IsVoiceMode
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 2792412021877903884, guid: c123adc95aea7fa4b8fe1e77e292cae6, type: 3}
-      propertyPath: m_CommitMsgBtn
-      value: 
-      objectReference: {fileID: 759909826}
     - target: {fileID: 3781765043379989371, guid: c123adc95aea7fa4b8fe1e77e292cae6, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

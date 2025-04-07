@@ -42,7 +42,6 @@ namespace Aki.Scripts.UI
         /// </summary>
         protected ConcurrentQueue<string> m_tempResponse = new ConcurrentQueue<string>();
 
-        protected TextStreamProcessor textStreamProcessor = new TextStreamProcessor();
 
         /// <summary>
         /// 发送消息
