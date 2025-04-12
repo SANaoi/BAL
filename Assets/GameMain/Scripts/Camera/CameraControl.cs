@@ -49,7 +49,6 @@ namespace Aki.Scripts.Camera
         void ScrollWheel()
         {
             var scrollValue = inputProvider.GetAxisValue(2) * zoomSensitivity;
-            Debug.Log(scrollValue);
             float currentDistance = framingTransposer.m_CameraDistance;
 
             targetDistance = Mathf.Clamp(targetDistance + scrollValue, minimumDistance, maximumDistance);

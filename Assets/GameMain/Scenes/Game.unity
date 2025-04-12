@@ -1337,7 +1337,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1176249014
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1450,7 +1450,7 @@ Transform:
   m_GameObject: {fileID: 1176249013}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1004.64136, y: 473.93567, z: 8.490621}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1467,6 +1467,10 @@ PrefabInstance:
     - target: {fileID: 246895554739621179, guid: c123adc95aea7fa4b8fe1e77e292cae6, type: 3}
       propertyPath: m_Name
       value: UIAIChatForm
+      objectReference: {fileID: 0}
+    - target: {fileID: 246895554739621179, guid: c123adc95aea7fa4b8fe1e77e292cae6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 598378617986383116, guid: c123adc95aea7fa4b8fe1e77e292cae6, type: 3}
       propertyPath: m_AudioSource

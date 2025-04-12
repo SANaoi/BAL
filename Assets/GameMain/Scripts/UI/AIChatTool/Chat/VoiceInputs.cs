@@ -5,14 +5,21 @@ namespace Aki.Scripts.UI
 {
     public class VoiceInputs
     {
+        public AudioClip recording;
+
+        public int m_RecordingLength = 5;
         internal void StartRecordAudio()
         {
-            throw new NotImplementedException();
+            recording = Microphone.Start(null, false, m_RecordingLength, 16000);
         }
 
-        internal void StopRecordAudio(Action<AudioClip> acceptClip)
+        internal void StopRecordAudio(Action<AudioClip> _callback)
         {
-            throw new NotImplementedException();
+            Microphone.End(null);
+            if (recording != null)
+            {
+                _callback?.Invoke(recording);
+            }
         }
     }
 }
