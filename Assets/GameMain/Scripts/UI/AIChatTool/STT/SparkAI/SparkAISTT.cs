@@ -210,30 +210,14 @@ namespace Aki.Scripts.UI
         {
             IatRequest request = new IatRequest
             {
-                header = new IatRequest.Header
+                common = new IatRequest.Common { app_id = appId },
+                business = new IatRequest.Business(),
+                data = new IatRequest.Data
                 {
-                    app_id = appId,
                     status = isFirst ? 0 : (isLast ? 2 : 1),
-                },
-                parameter = new IatRequest.Parameter // 必须始终存在
-                {
-                    iat = new IatRequest.Parameter.IatParams
-                    {
-                        result = new IatRequest.Parameter.IatParams.ResultParams()
-                    }
-                },
-                payload = new IatRequest.Payload
-                {
-                    audio = new IatRequest.Payload.AudioData
-                    {
-                        seq = frameSeq++,
-                        status = isFirst ? 0 : (isLast ? 2 : 1),
-                        audio = Convert.ToBase64String(pcmdata)
-                    }
+                    audio = Convert.ToBase64String(pcmdata)
                 }
             };
-            // 移除未使用的字段（中间帧无parameter）
-            if (!isFirst) request.parameter = null; // 非首帧置空
             return JsonUtility.ToJson(request);
         }
 
@@ -296,48 +280,23 @@ namespace Aki.Scripts.UI
             try
             {
                 SparkResponse response = JsonUtility.FromJson<SparkResponse>(json);
-                Debug.Log("[DEBUG] 原始响应JSON: " + json);
-                // 1. 检查 response 是否为空
-                if (response == null)
+                if (response.code != 0)
                 {
-                    Debug.LogError("反序列化失败，响应为空");
+                    Debug.LogError($"识别失败: {response.code} - {response.message}");
                     return;
                 }
 
-                // 2. 检查 header 是否存在
-                if (response.header == null)
+                if (response.data?.status == 1 && !string.IsNullOrEmpty(response.data.result))
                 {
-                    Debug.LogError("响应缺少 header");
-                    return;
+                    string decodedText = Encoding.UTF8.GetString(
+                        Convert.FromBase64String(response.data.result)
+                    );
+                    Debug.Log($"最终结果: {decodedText}");
                 }
-
-                // 3. 处理错误码
-                if (response.header.code != 0)
+                else if (response.data?.status == 0)
                 {
-                    Debug.LogError($"识别错误: {response.header.code} - {response.header.message}");
-                    return;
+                    Debug.Log("中间结果处理...");
                 }
-
-                // 4. 检查 payload 和 result
-                if (response.payload?.result == null)
-                {
-                    Debug.Log("无有效结果数据");
-                    return;
-                }
-
-                // 5. 检查 text 字段
-                if (string.IsNullOrEmpty(response.payload.result.text))
-                {
-                    Debug.Log("结果文本为空");
-                    return;
-                }
-
-                // 安全访问
-                string decodedText = Encoding.UTF8.GetString(
-                    Convert.FromBase64String(response.payload.result.text)
-                );
-                realtimeText.Append(decodedText);
-                Debug.Log($"识别结果: {realtimeText}");
             }
             catch (Exception ex)
             {

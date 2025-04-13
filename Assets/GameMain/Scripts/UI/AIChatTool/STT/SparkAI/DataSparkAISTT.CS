@@ -1,97 +1,53 @@
+using System;
 using UnityEngine;
 
 namespace Aki.Scripts.UI
 {
     public class DataSparkAISTT
     {
-        [System.Serializable]
+        [Serializable]
         public class IatRequest
         {
-            public Header header;
-            public Parameter parameter;
-            public Payload payload;
+            public Common common;
+            public Business business;
+            public Data data;
 
-            [System.Serializable]
-            public class Header
+            [Serializable]
+            public class Common
             {
                 public string app_id;
-                public int status; // 0:首帧 1:中间 2:尾帧
             }
 
-            [System.Serializable]
-            public class Parameter
+            [Serializable]
+            public class Business
             {
-                public IatParams iat;
-
-                [System.Serializable]
-                public class IatParams
-                {
-                    public string domain = "iat";
-                    public string language = "zh_cn";
-                    public string accent = "mandarin";
-                    public int eos = 6000;   // 静音检测超时（ms）
-                    public int vinfo = 1;     // 返回中间结果
-                    public string dwa = "wpgs";// 动态修正
-                    public ResultParams result;
-
-                    [System.Serializable]
-                    public class ResultParams
-                    {
-                        public string encoding = "utf8";
-                        public string compress = "raw";
-                        public string format = "json";
-                    }
-                }
+                public string language = "zh_cn";
+                public string domain = "iat";
+                public string accent = "mandarin";
             }
 
-            [System.Serializable]
-            public class Payload
+            [Serializable]
+            public class Data
             {
-                public AudioData audio;
-
-                [System.Serializable]
-                public class AudioData
-                {
-                    public string encoding = "raw";
-                    public int sample_rate = 16000;
-                    public int channels = 1;
-                    public int bit_depth = 16;
-                    public int seq;      // 帧序列号（从1递增）
-                    public int status;   // 同header.status
-                    public string audio; // Base64编码的PCM数据
-                }
+                public int status;
+                public string format = "audio/L16;rate=16000";
+                public string audio;  // Base64编码的音频数据
+                public string encoding = "raw";
             }
         }
         [System.Serializable]
         public class SparkResponse
         {
-            public Header header;
-            public Payload payload;
+            public int code;
+            public string message;
+            public string sid;
+            public ResponseData data;
 
-            [System.Serializable]
-            public class Header
+            [Serializable]
+            public class ResponseData
             {
-                public int code;      // 0表示成功
-                public string message;
-                public string sid;    // 会话ID
-                public int status;    // 0:中间结果 1:尾帧
-            }
-
-            [System.Serializable]
-            public class Payload
-            {
-                public Result result;
-
-                [System.Serializable]
-                public class Result
-                {
-                    public string compress;
-                    public string encoding;
-                    public string format;
-                    public int seq;
-                    public int status;
-                    public string text; // Base64编码的实际文本
-                }
+                public string result;
+                public int status; // 0:中间结果, 1:最终结果
             }
         }
     }
