@@ -7,8 +7,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using Aki.AI.Demo;
 using UnityEngine;
+using UnityEngine.UI;
 using static Aki.Scripts.UI.DataSparkAISTT;
 
 namespace Aki.Scripts.UI
@@ -16,30 +16,29 @@ namespace Aki.Scripts.UI
     public class SparkAISTT : STT
     {
         private ClientWebSocket webSocket;
-        // private CancellationToken cancellationToken;
-        private CancellationTokenSource timeoutCTS = new CancellationTokenSource();
+        private CancellationTokenSource connectionCTS = new CancellationTokenSource();
+        private CancellationTokenSource receiveCTS = new CancellationTokenSource();
         private string apiKey = "98989f21fb7430bf845fc191784b70fd";
         private string apiSecret = "MjNhM2FhYzY0OWQ5ZGM5MjJkZjdkNjFh";
         private string appId = "064b0378";
 
         private string wsUrl = "wss://iat-api.xfyun.cn/v2/iat";
         private string authorization = "";
-
-        private int frameSeq = 1; // 帧序列号（需递增）
-        private bool isRecording = false;
         private int sampleRate = 16000; // 采样率
-        private int frameSize = 1280; // 每帧大小
-
+        private int frameSize = 12800;
         private bool isFinalResultReceived;
+
         private StringBuilder realtimeText = new StringBuilder();
+        public Text text; // 用于显示实时文本
 
         void Update()
         {
             Debug.Log($"WebSocket状态: {webSocket?.State}");
+            text.text = realtimeText.ToString(); // 更新UI文本
         }
         public void OnStart()
         {
-            SpeechToText(Microphone.Start(null, true, 5, sampleRate), (result) => { });
+            SpeechToText(Microphone.Start(null, true, 48, sampleRate), (result) => { });
         }
 
         public override void SpeechToText(AudioClip _clip, Action<string> _callback)
@@ -50,7 +49,7 @@ namespace Aki.Scripts.UI
 
         IEnumerator SendAudioData(AudioClip _clip, Action<string> _callback)
         {
-            isRecording = true;
+            // isRecording = true;
             yield return null;
             _ = OnStartRecoding(_clip);
             _callback?.Invoke(new string("语音识别中..."));
@@ -61,7 +60,7 @@ namespace Aki.Scripts.UI
             try
             {
                 DateTime timestamp = DateTime.Now;
-                string signedUrl = BuildWebSocketUrl
+                string signedUrl = GetAuthUrl
                 (
                     apiKey,
                     apiSecret,
@@ -70,11 +69,9 @@ namespace Aki.Scripts.UI
                 );
                 Debug.Log($"WebSocket连接地址: {signedUrl}");
                 webSocket = new ClientWebSocket();
-                // cancellationToken = new CancellationToken();
-                // 设置超时（10秒）
-                // CancellationTokenSource timeoutCTS = new CancellationTokenSource(10000);
-                await webSocket.ConnectAsync(new Uri(signedUrl), timeoutCTS.Token);
+                await webSocket.ConnectAsync(new Uri(signedUrl), connectionCTS.Token);
 
+                
                 if (webSocket.State == WebSocketState.Open)
                 {
                     _ = ReceiveMessage(); // 启动接收任务
@@ -107,7 +104,7 @@ namespace Aki.Scripts.UI
             return authorization = Convert.ToBase64String(authorizationBytes);
         }
 
-        string BuildWebSocketUrl
+        string GetAuthUrl
         (
             string apiKey,
             string apiSecret,
@@ -130,43 +127,36 @@ namespace Aki.Scripts.UI
         #region 启动音频采集和发送
         IEnumerator SendAudioFrames(AudioClip audioClip)
         {
-            float[] audioData = new float[frameSize / 2]; // 每帧16000Hz*16bit=1280字节
-
-            while (Microphone.GetPosition(null) <= 0)
-            {
-                yield return null; // 等待麦克风初始化
-            }
+            int samplesPerFrame = frameSize / 2; // 假设 frameSize=1280字节 → 640样本
+            float[] audioData = new float[samplesPerFrame];
 
             int readPos = 0;
             while (webSocket.State == WebSocketState.Open)
             {
-
                 int currentPos = Microphone.GetPosition(null);
                 if (currentPos < readPos)
                 {
-                    currentPos += audioClip.samples; // 处理循环录音
+                    currentPos += audioClip.samples;
                 }
                 int availableSamples = currentPos - readPos;
-                if (availableSamples >= frameSize / 2)
+
+                // 处理所有可用帧
+                while (availableSamples >= samplesPerFrame)
                 {
-                    // 读取正确的采样点数
-                    audioClip.GetData(audioData, readPos % audioClip.samples);
+                    int readIndex = readPos % audioClip.samples;
+                    audioClip.GetData(audioData, readIndex);
 
-                    // 转换为PCM字节
                     byte[] pcmBytes = ConvertAudioToPCM(audioData);
-
-                    bool isFirst = readPos == 0;
+                    bool isFirst = (readPos == 0);
                     bool isLast = false;
-
                     _ = SendAudioFrame(pcmBytes, isFirst, isLast);
 
-                    readPos += audioData.Length;
+                    readPos = (readPos + frameSize / 2) % audioClip.samples;
+                    availableSamples -= samplesPerFrame;
                 }
-                yield return new WaitForSeconds(0.04f); // 每40ms发送一次数据
-            }
 
-            // 循环结束后发送尾帧
-            _ = SendAudioFrame(new byte[0], isFirst: false, isLast: true);
+                yield return new WaitForSeconds(0.04f);
+            }
         }
         public byte[] ConvertClipToBytes(AudioClip audioClip)
         {
@@ -232,7 +222,7 @@ namespace Aki.Scripts.UI
                     new ArraySegment<byte>(jsonBytes),
                     WebSocketMessageType.Text,
                     true,
-                    timeoutCTS.Token
+                    connectionCTS.Token
                 );
             }
             catch (WebSocketException ex)
@@ -248,22 +238,16 @@ namespace Aki.Scripts.UI
             try
             {
                 byte[] buffer = new byte[4096];
-                var memoryStream = new MemoryStream(); // 新增内存流
-
                 while (webSocket.State == WebSocketState.Open)
                 {
                     WebSocketReceiveResult result = await webSocket.ReceiveAsync(
                         new ArraySegment<byte>(buffer),
-                        CancellationToken.None // 建议使用独立Token
+                        receiveCTS.Token
                     );
-                    Debug.Log($"接收数据: {result.Count}字节, 结束标志: {result.EndOfMessage}");
-                    memoryStream.Write(buffer, 0, result.Count);
 
-                    if (result.EndOfMessage)
+                    if (result.MessageType == WebSocketMessageType.Text)
                     {
-                        string jsonResponse = Encoding.UTF8.GetString(memoryStream.ToArray());
-                        Debug.Log($"接收到完整数据: {jsonResponse}");
-                        memoryStream.SetLength(0); // 重置流
+                        string jsonResponse = Encoding.UTF8.GetString(buffer, 0, result.Count);
                         ProcessResponse(jsonResponse);
                     }
                 }
@@ -272,7 +256,6 @@ namespace Aki.Scripts.UI
             {
                 Debug.LogError($"接收失败: {ex}");
             }
-
         }
 
         void ProcessResponse(string json)
@@ -286,16 +269,10 @@ namespace Aki.Scripts.UI
                     return;
                 }
 
-                if (response.data?.status == 1 && !string.IsNullOrEmpty(response.data.result))
+                if (response.data?.status == 1)
                 {
-                    string decodedText = Encoding.UTF8.GetString(
-                        Convert.FromBase64String(response.data.result)
-                    );
-                    Debug.Log($"最终结果: {decodedText}");
-                }
-                else if (response.data?.status == 0)
-                {
-                    Debug.Log("中间结果处理...");
+                    realtimeText.Append(GetWords(response));
+                    Debug.Log($"中间结果: {realtimeText}");
                 }
             }
             catch (Exception ex)
@@ -311,14 +288,18 @@ namespace Aki.Scripts.UI
                 {
                     if (webSocket.State == WebSocketState.Open)
                     {
+                        // 循环结束后发送尾帧
+                        _ = SendAudioFrame(new byte[0], isFirst: false, isLast: true);
+
                         await webSocket.CloseAsync(
                             WebSocketCloseStatus.NormalClosure,
                             "User requested close",
                             CancellationToken.None
                         );
                     }
-                    timeoutCTS.Cancel();
-                    webSocket.Dispose();
+                    connectionCTS.Cancel();
+                    receiveCTS.Cancel();
+                    webSocket?.Dispose();
                     webSocket = null;
                 }
             }
@@ -329,24 +310,33 @@ namespace Aki.Scripts.UI
         }
         public void StopRecoding()
         {
-            isRecording = false; // 停止音频采集
-
+            text.text = "";
             // 延迟等待最终结果
             StartCoroutine(WaitForFinalResult());
             Microphone.End(null); // 停止麦克风录音
         }
-
         IEnumerator WaitForFinalResult()
         {
-            float timeout = 5.0f; // 最多等待5秒
-            float startTime = Time.time;
-
-            while (!isFinalResultReceived && Time.time - startTime < timeout)
-            {
-                yield return null;
-            }
-
+            yield return new WaitForSeconds(1f); // 等待1秒以确保接收完数据
             CloseWebSocket();
+        }
+
+        /// <summary>
+        /// 获取识别到的文本
+        /// </summary>
+        /// <param name="_responseData"></param>
+        /// <returns></returns>
+        private string GetWords(SparkResponse _responseData)
+        {
+            string stringBuilder = "";
+            foreach (var item in _responseData.data.result.ws)
+            {
+                foreach (var _cw in item.cw)
+                {
+                    stringBuilder += _cw.w;
+                }
+            }
+            return stringBuilder;
         }
         #endregion
     }

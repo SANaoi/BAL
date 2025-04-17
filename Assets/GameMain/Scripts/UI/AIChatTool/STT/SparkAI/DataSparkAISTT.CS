@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Aki.Scripts.UI
@@ -24,6 +25,8 @@ namespace Aki.Scripts.UI
                 public string language = "zh_cn";
                 public string domain = "iat";
                 public string accent = "mandarin";
+                public int vad_eos = 5000; // 静默时长设置
+                public string dwa = "wpgs"; // 开启流式结果返回
             }
 
             [Serializable]
@@ -46,8 +49,27 @@ namespace Aki.Scripts.UI
             [Serializable]
             public class ResponseData
             {
-                public string result;
+                public result result;
                 public int status; // 0:中间结果, 1:最终结果
+            }
+
+            [Serializable]
+            public class result
+            {
+                [SerializeField] public List<WsTag> ws;
+            }
+
+            [Serializable]
+            public class WsTag
+            {
+                [SerializeField] public List<CwTag> cw;
+            }
+
+            [Serializable]
+            public class CwTag
+            {
+                [SerializeField] public int sc = 0;
+                [SerializeField] public string w = string.Empty;
             }
         }
     }

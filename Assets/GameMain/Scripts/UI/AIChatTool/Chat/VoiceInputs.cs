@@ -7,7 +7,7 @@ namespace Aki.Scripts.UI
     {
         public AudioClip recording;
 
-        public int m_RecordingLength = 5;
+        public int m_RecordingLength = 10;
         internal void StartRecordAudio()
         {
             recording = Microphone.Start(null, false, m_RecordingLength, 16000);
