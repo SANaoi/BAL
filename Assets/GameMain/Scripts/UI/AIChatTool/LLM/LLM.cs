@@ -49,7 +49,8 @@ namespace Aki.Scripts.UI
         public virtual void PostMsg(string _msg, Action<string> _callback)
         {
             //上下文条数设置
-            CheckHistory();
+            // CheckHistory();
+            
             //提示词处理
             string message = "当前为角色的人物设定：" + m_Prompt +
                 " 回答的语言：" + lan +

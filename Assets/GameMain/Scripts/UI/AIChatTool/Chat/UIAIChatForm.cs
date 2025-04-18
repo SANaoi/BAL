@@ -14,7 +14,7 @@ namespace Aki.Scripts.UI
         private void Start()
         {
             m_CommitMsgBtn.onClick.AddListener(SendData);
-            RegistButtonEvent();
+            m_VoiceInputBotton.onClick.AddListener(startStreamRecord);
         }
 
     #region UI定义
@@ -54,8 +54,6 @@ namespace Aki.Scripts.UI
         /// </summary>
         [Header("设置是否通过语音合成播放文本")]
         [SerializeField] private bool m_IsVoiceMode = true;
-        [Header("勾选则不发送LLM, 直接合成输入文字")]
-        [SerializeField] private bool m_CreateVoiceMode = false;
 
         /// <summary>
         /// 语音合成的音频缓存列表
@@ -80,13 +78,6 @@ namespace Aki.Scripts.UI
             {
                 return;
             }
-
-            if (m_CreateVoiceMode) //  合成输入为语音
-            {
-                CallBack(m_InputWord.text);
-                m_InputWord.text = "";
-                return;
-            }
             //判断是否在聊天中
             Constant.ChatData.IsChatting = true;
             
@@ -102,6 +93,28 @@ namespace Aki.Scripts.UI
             m_TextBack.text = "正在思考中...";
 
             //切换思考动作
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="_msg">语音生成文本</param>
+        private void SendData(string _msg)
+        {
+            if (_msg.Equals("") || m_InputWord.text.Equals(""))
+            {
+                return;
+            }
+            //判断是否在聊天中
+            Constant.ChatData.IsChatting = true;
+            //添加记录聊天
+            m_ChatHistory.Add(_msg);
+
+            //发送数据
+            m_ChatSettings.m_ChatModel.PostMsg(_msg, CallBack);
+
+            m_InputWord.text = "";
+            m_TextBack.text = "正在思考中...";
+
         }
 
         /// <summary>
@@ -139,94 +152,44 @@ namespace Aki.Scripts.UI
     #endregion
 
     #region 语音输入 
-        /// <summary>
-        /// 语音识别返回的文本是否直接发送至LLM
-        /// </summary>
-        [SerializeField] private bool m_AutoSend = true;
+
         /// <summary>
         /// 语音输入的按钮
         /// </summary>
         [SerializeField] private Button m_VoiceInputBotton;
-        /// <summary>
-        /// 录音按钮的文本
-        /// </summary>
-        [SerializeField]private Text m_VoiceBottonText;
+
         /// <summary>
         /// 录音的提示信息
         /// </summary>
         [SerializeField] private Text m_RecordTips;
-        /// <summary>
-        /// 语音输入处理类
-        /// </summary>
-        [SerializeField] private VoiceInputs m_VoiceInputs;
-        /// <summary>
-        /// 注册按钮事件
-        /// </summary>
-        private void RegistButtonEvent()
-        {
-            if (m_VoiceInputBotton == null || m_VoiceInputBotton.GetComponent<EventTrigger>())
-                return;
-    
-            EventTrigger _trigger = m_VoiceInputBotton.gameObject.AddComponent<EventTrigger>();
-    
-            //添加按钮按下的事件
-            EventTrigger.Entry _pointDown_entry = new EventTrigger.Entry();
-            _pointDown_entry.eventID = EventTriggerType.PointerDown;
-            _pointDown_entry.callback = new EventTrigger.TriggerEvent();
-    
-            //添加按钮松开事件
-            EventTrigger.Entry _pointUp_entry = new EventTrigger.Entry();
-            _pointUp_entry.eventID = EventTriggerType.PointerUp;
-            _pointUp_entry.callback = new EventTrigger.TriggerEvent();
-    
-            //添加委托事件
-            _pointDown_entry.callback.AddListener(delegate { StartRecord(); });
-            _pointUp_entry.callback.AddListener(delegate { StopRecord(); });
-    
-            _trigger.triggers.Add(_pointDown_entry);
-            _trigger.triggers.Add(_pointUp_entry);
-        }
 
         /// <summary>
-        /// 开始录制
+        /// 是否发送文本信息
         /// </summary>
-        public void StartRecord()
-        {
-            m_VoiceBottonText.text = "正在录音中..."; 
-            m_VoiceInputs.StartRecordAudio();
-        }
-        /// <summary>
-        /// 结束录制
-        /// </summary>
-        public void StopRecord()
-        {
-            m_VoiceBottonText.text = "按住按钮，开始录音"; 
-            m_RecordTips.text = "录音结束，正在识别...";
-            m_VoiceInputs.StopRecordAudio(AcceptClip);
-        }
+        [SerializeField] private bool m_AutoSend = true;
+
+        bool m_isRecording = false;
 
         /// <summary>
-        /// 处理录制的音频数据
+        /// 流式录音
         /// </summary>
         /// <param name="_data"></param>
-        private void AcceptData(byte[] _data)
+        private void startStreamRecord()
         {
             if (m_ChatSettings.m_SpeechToText == null)
                 return;
-
-            m_ChatSettings.m_SpeechToText.SpeechToText(_data, DealingTextCallback);
-        }
-
-        /// <summary>
-        /// 处理录制的音频数据
-        /// </summary>
-        /// <param name="_data"></param>
-        private void AcceptClip(AudioClip _audioClip)
-        {
-            if (m_ChatSettings.m_SpeechToText == null)
-                return;
-
-            m_ChatSettings.m_SpeechToText.SpeechToText(_audioClip, DealingTextCallback);
+            if (!m_isRecording)
+            {
+                m_ChatSettings.m_SpeechToText.SpeechToText(DealingTextCallback);
+                m_RecordTips.text = "正在聆听...";
+                m_isRecording = true;
+            }
+            else
+            {
+                m_ChatSettings.m_SpeechToText.SpeechToText(DealingTextCallback);
+                m_RecordTips.text = "按住说话...";
+                m_isRecording = false;
+            }
         }
         /// <summary>
         /// 处理识别到的文本
@@ -234,22 +197,14 @@ namespace Aki.Scripts.UI
         /// <param name="_msg"></param>
         private void DealingTextCallback(string _msg)
         {
-            m_RecordTips.text = _msg;
-            StartCoroutine(SetTextVisible(m_RecordTips));
-            //自动发送
-            if (m_AutoSend)
+            m_InputWord.text = _msg;
+            // 自动发送
+            if (m_AutoSend && !m_isRecording)
             {
-                // SendData(_msg);
+                SendData(_msg);
                 return;
             }
 
-            m_InputWord.text = _msg;
-        }
-
-        private IEnumerator SetTextVisible(Text _textbox)
-        {
-            yield return new WaitForSeconds(3f);
-            _textbox.text = "";
         }
 
     #endregion
@@ -405,12 +360,5 @@ namespace Aki.Scripts.UI
             //切换到等待动作
         }
     #endregion
-        private void SetAnimator(string _para,int _value)
-        {
-            if (m_Animator == null)
-                return;
-
-            m_Animator.SetInteger(_para, _value);
-        }
     }
 }

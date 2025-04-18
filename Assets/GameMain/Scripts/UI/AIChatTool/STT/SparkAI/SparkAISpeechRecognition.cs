@@ -4,20 +4,13 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Security.Cryptography;
-using System.Collections.Generic;
 using WebSocketSharp;
-
-
 using static Aki.Scripts.UI.DataSparkAISTT;
-using Unity.VisualScripting.Antlr3.Runtime;
+
 namespace Aki.Scripts.UI
 {
     public class SparkAISpeechRecognition : STT
     {
-        [Header("UI Settings")]
-        public Button startButton;
-        public Text resultText;
-
         [Header("API Settings")]
         public string appId = "064b0378";
         public string apiKey = "98989f21fb7430bf845fc191784b70fd";
@@ -34,11 +27,13 @@ namespace Aki.Scripts.UI
         private readonly int statusLastFrame = 2;
 
         private bool isFirstFrameSent = false;
-        private StringBuilder fullResult = new StringBuilder();
+        public StringBuilder fullResult = new StringBuilder();
 
-        void Start()
+        private Action<string> m_callback = null;
+        public override void SpeechToText(Action<string> _callback)
         {
-            startButton.onClick.AddListener(ToggleRecording);
+            ToggleRecording();
+            m_callback = _callback;
         }
 
         void ToggleRecording()
@@ -79,9 +74,7 @@ namespace Aki.Scripts.UI
         void StartRecording()
         {
             fullResult.Clear();
-            resultText.text = "";
             isRecording = true;
-            startButton.GetComponentInChildren<Text>().text = "停止";
 
             // 初始化WebSocket
             ws = new WebSocket(GetAuthUrl());
@@ -174,8 +167,8 @@ namespace Aki.Scripts.UI
 
             if (response.data.status == 2)
             {
-                StopRecording();
-                UpdateResultText(true);
+                Debug.Log("response.data.status == 2");
+                // StopRecording();
             }
             else
             {
@@ -189,21 +182,15 @@ namespace Aki.Scripts.UI
                     }
                 }
                 fullResult.Append(currentText);
-                UpdateResultText(false);
-            }
-        }
 
-        void UpdateResultText(bool isFinal)
-        {
-            resultText.text = fullResult.ToString();
-            if (isFinal) resultText.text += "（识别完成）";
+                m_callback?.Invoke(fullResult.ToString());
+            }
         }
         #endregion
 
         #region 停止录音
         void StopRecording()
         {
-            // startButton.GetComponentInChildren<Text>().text = "开始";
             if (!isRecording) return;
 
             // 停止录音和协程
@@ -223,10 +210,11 @@ namespace Aki.Scripts.UI
                 }
             };
             ws.Send(JsonUtility.ToJson(endRequest));
-            Debug.Log("Sent final frame");
 
             // 延迟关闭连接，确保最后一帧发送完成
             StartCoroutine(DelayCloseWebSocket());
+
+            m_callback?.Invoke(fullResult.ToString());
         }
 
         IEnumerator DelayCloseWebSocket()
@@ -237,6 +225,7 @@ namespace Aki.Scripts.UI
                 ws.Close();
                 ws = null;
             }
+            Debug.Log("Sent final frame");
         }
         #endregion
     }

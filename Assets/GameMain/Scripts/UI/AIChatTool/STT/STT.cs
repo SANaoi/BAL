@@ -15,6 +15,7 @@ namespace Aki.Scripts.UI
         /// 计算方法调用的时间
         /// </summary>
         [SerializeField] protected Stopwatch stopwatch = new Stopwatch();
+
         /// <summary>
         /// 语音识别
         /// </summary>
@@ -30,6 +31,11 @@ namespace Aki.Scripts.UI
         /// <param name="_callback"></param>
         public virtual void SpeechToText(byte[] _audioData, Action<string> _callback)
         {
+        }
+
+        public virtual void SpeechToText(Action<string> _callback)
+        {
+            
         }
     }
 }
