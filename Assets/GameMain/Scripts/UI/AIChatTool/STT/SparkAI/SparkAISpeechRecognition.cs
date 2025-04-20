@@ -183,7 +183,7 @@ namespace Aki.Scripts.UI
                 }
                 fullResult.Append(currentText);
 
-                m_callback?.Invoke(fullResult.ToString());
+                m_callback?.Invoke(currentText.ToString());
             }
         }
         #endregion
