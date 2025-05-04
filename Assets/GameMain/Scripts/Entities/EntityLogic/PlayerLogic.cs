@@ -11,17 +11,19 @@ using Aki.Plugins;
 using Aki.Scripts.FSM;
 using Aki.Scripts.Definition.AnimationName;
 using Aki.Scripts.Camera;
+using Aki.Scripts.UI;
 using GameEntry = Aki.Scripts.Base.GameEntry;
 
 namespace Aki.Scripts.Entities
 {
     public class PlayerLogic : DefaultEntityLogic
     {
-        // 输入值
-        public bool isRunning = false; 
+        [Header("输入值")]
+        public bool isRunning = false;
         public Vector2 playerMoveInput;
 
-        // Entity挂载
+
+        [Header("Entity挂载")]
         public Rigidbody rb;
         public Animator animator;
         public Transform CameraParent;
@@ -29,7 +31,7 @@ namespace Aki.Scripts.Entities
         public CharacterController characterController;
         protected PlayerInputAction.PlayerActions moveActions;
 
-        // 玩家数据
+        [Header("玩家数据")]
         public UnityEngine.Camera m_Camera;
         private CameraControl cameraControl;
         public CameraData cameraData;
@@ -40,23 +42,35 @@ namespace Aki.Scripts.Entities
         public Vector3 playerMovement = Vector3.zero;
         public float currentSpeed = 0;
 
+        [Header("交互设置")]
+        [SerializeField] private LayerMask interactableLayer;
+        private InteractableEntityLogic currentInteractable;
+        private HashSet<InteractableEntityLogic> potentialInteractables = new();
+        private BoxCollider triggerCollider;
+        private Vector3 triggerOffset = new Vector3(0, 1f, 0);
+
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
 
-            m_Camera            = UnityEngine.Camera.main;
-            playerData          = userData as PlayerData;
+            m_Camera = UnityEngine.Camera.main;
+            playerData = userData as PlayerData;
 
             playerAnimationName = new PlayerAnimationName();
-            stateList           = new List<FsmState<PlayerLogic>>();
-            inputActions        = new PlayerInputAction();
-            moveActions         = inputActions.Player;
+            stateList = new List<FsmState<PlayerLogic>>();
+            inputActions = new PlayerInputAction();
+            moveActions = inputActions.Player;
 
-            animator            = GetComponent<Animator>();
+            animator = GetComponent<Animator>();
             characterController = GetComponent<CharacterController>();
-            rb                  = GetComponent<Rigidbody>();
+            rb = GetComponent<Rigidbody>();
+
+            triggerCollider = GetComponent<BoxCollider>();
+            triggerCollider.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+            triggerCollider.isTrigger = true;
+
         }
-        
+
         protected override void OnShow(object userData)
         {
             base.OnShow(userData);
@@ -72,7 +86,7 @@ namespace Aki.Scripts.Entities
             inputActions.Enable();
             playerAnimationName.InitializeData();
             AddInputActionsCallbacks(); // 添加输入回调
-            
+
         }
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
@@ -81,6 +95,7 @@ namespace Aki.Scripts.Entities
 
             CaculateInputDirection();
             SetUpAnimator();
+            UpdateNearestInteractable();
         }
 
         /// <summary>
@@ -132,7 +147,7 @@ namespace Aki.Scripts.Entities
         /// </summary>
         private void OnShowVirtualCameraSuccess(object sender, GameEventArgs e)
         {
-            ShowEntitySuccessEventArgs ne = (ShowEntitySuccessEventArgs) e;
+            ShowEntitySuccessEventArgs ne = (ShowEntitySuccessEventArgs)e;
             if (ne.EntityLogicType != typeof(CameraControl))
             {
                 return;
@@ -147,7 +162,7 @@ namespace Aki.Scripts.Entities
             GameEntry.Event.Subscribe(ShowEntitySuccessEventArgs.EventId, OnShowVirtualCameraSuccess);
             CameraParent = GameObject.Find("CameraRoot").transform;
             cameraData = new CameraData(GameEntry.Entity.GenerateSerialId(), (int)EnumCamera.CameraPlayer);
-            
+
             GameEntry.Entity.ShowEntity(cameraData, typeof(CameraControl));
         }
 
@@ -157,14 +172,14 @@ namespace Aki.Scripts.Entities
         //     transform.rotation *= animator.deltaRotation;
         // }
         #region Move Function
-        
+
         /// <summary>
         /// 计算玩家输入相对相机的方向
         /// </summary>
         void CaculateInputDirection()
         {
             Vector3 camForwardProjection = new Vector3(m_Camera.transform.forward.x, 0, m_Camera.transform.forward.z).normalized;
-            playerMovement = camForwardProjection * playerMoveInput.y + m_Camera.transform.right * playerMoveInput.x; 
+            playerMovement = camForwardProjection * playerMoveInput.y + m_Camera.transform.right * playerMoveInput.x;
             playerMovement = transform.InverseTransformDirection(playerMovement);
         }
 
@@ -183,10 +198,10 @@ namespace Aki.Scripts.Entities
             PlayAnimation(playerAnimationName.playerVerticalVelocityHash, rad);
             transform.Rotate(0, rad * 400 * Time.deltaTime, 0f);
         }
-        
+
         #endregion
 
-        # region Input Function
+        #region Input Function
         protected virtual void AddInputActionsCallbacks()
         {
             moveActions.Move.canceled += OnMovementCanceled;
@@ -209,7 +224,7 @@ namespace Aki.Scripts.Entities
         {
             playerMoveInput = Vector2.zero;
         }
-        
+
         void GetRunInput(InputAction.CallbackContext ctx)
         {
             isRunning = !isRunning;
@@ -238,6 +253,77 @@ namespace Aki.Scripts.Entities
             animator.SetBool(animationHash, false);
         }
 
+        # endregion
+
+        # region 场景交互
+        private void UpdateNearestInteractable()
+        {
+            // 退出
+            if (potentialInteractables.Count == 0)
+            {
+                if (currentInteractable != null)
+                {
+                    currentInteractable.OnExitRange();
+                    currentInteractable = null;
+                }
+                return;
+            }
+
+            // 寻找最近的可交互对象
+            InteractableEntityLogic nearest = null;
+            float minDistance = float.MaxValue;
+
+            foreach (InteractableEntityLogic interactable in potentialInteractables)
+            {
+                if (!interactable.IsActive) continue;
+
+                float distance = Vector3.Distance(
+                    transform.position + triggerOffset,
+                    interactable.transform.position
+                );
+
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    nearest = interactable;
+                }
+            }
+
+            // 更新交互对象
+            if (nearest != currentInteractable)
+            {
+                currentInteractable?.OnExitRange();
+                currentInteractable = nearest;
+                currentInteractable?.OnEnterRange();
+            }
+        }
+
+        private void HandleInteractionInput()
+        {
+
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (((1 << other.gameObject.layer) & interactableLayer) == 0) return;
+
+            if (other.TryGetComponent<InteractableEntityLogic>(out var interactableEntityLogic))
+            {
+                potentialInteractables.Add(interactableEntityLogic);
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.TryGetComponent<InteractableEntityLogic>(out var interactable))
+            {
+                potentialInteractables.Remove(interactable);
+                if (interactable == currentInteractable)
+                {
+                    interactable.OnExitRange();
+                }
+            }
+        }
         # endregion
     }
 }

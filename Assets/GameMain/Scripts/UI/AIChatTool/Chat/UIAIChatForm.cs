@@ -1,23 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityGameFramework.Runtime;
 
 using Aki.Scripts.Definition.Constant;
 
 namespace Aki.Scripts.UI
 {
-    public class UIAIChatForm : MonoBehaviour
+    public class UIAIChatForm : UGuiForm
     {
-        private void Start()
+        protected override void OnInit(object userData)
         {
             m_CommitMsgBtn.onClick.AddListener(SendData);
             m_VoiceInputBotton.onClick.AddListener(startStreamRecord);
         }
 
-    #region UI定义
+        #region UI定义
         /// <summary>
         /// 聊天配置
         /// </summary>
@@ -42,9 +40,9 @@ namespace Aki.Scripts.UI
         /// 发送信息按钮
         /// </summary>
         [SerializeField] private Button m_CommitMsgBtn;
-    #endregion
-    
-    #region 参数定义
+        #endregion
+
+        #region 参数定义
         /// <summary>
         /// 动画控制器
         /// </summary>
@@ -65,9 +63,9 @@ namespace Aki.Scripts.UI
         /// </summary>
         protected TextStreamProcessor textStreamProcessor = new TextStreamProcessor();
 
-    #endregion
+        #endregion
 
-    #region 消息发送
+        #region 消息发送
 
         /// <summary>
         /// 发送信息
@@ -80,7 +78,7 @@ namespace Aki.Scripts.UI
             }
             //判断是否在聊天中
             Constant.ChatData.IsChatting = true;
-            
+
             //添加记录聊天
             m_ChatHistory.Add(m_InputWord.text);
             //提示词
@@ -135,23 +133,25 @@ namespace Aki.Scripts.UI
             }
             m_TextBack.text = "";
 
-            Debug.Log("收到AI回复: "+ _response);
-            
+            Debug.Log("收到AI回复: " + _response);
+
             //记录聊天
             m_ChatHistory.Add(_response);
 
-            if (!m_IsVoiceMode||m_ChatSettings.m_TextToSpeech == null)
+            if (!m_IsVoiceMode)
             {
                 //开始逐个显示返回的文本
                 StartTypeWords(_response);
                 return;
             }
-
-            m_ChatSettings.m_TextToSpeech.Speak(_response, PlayVoice);
+            else if (m_IsVoiceMode || m_ChatSettings.m_TextToSpeech == null)
+            {
+                m_ChatSettings.m_TextToSpeech.Speak(_response, PlayVoice);
+            }
         }
-    #endregion
+        #endregion
 
-    #region 语音输入 
+        #region 语音输入 
 
         /// <summary>
         /// 语音输入的按钮
@@ -207,43 +207,43 @@ namespace Aki.Scripts.UI
 
         }
 
-    #endregion
+        #endregion
 
-    #region 语音合成
+        #region 语音合成
 
-    private void PlayVoice(AudioClip _clip, string _response)
-    {
-        StartTypeWords(_response);
-        EnqueueClip(_clip);
-        Debug.Log("音频时长："+_response +"---"+ _clip.length);
-        //开始逐个显示返回的文本
-    }
-
-    private void EnqueueClip(AudioClip _clip)
-    {
-        playbackQueue.Enqueue(_clip);
-        if (!Constant.ChatData.IsSpeaking)
+        private void PlayVoice(AudioClip _clip, string _response)
         {
-            StartCoroutine(PlayQueueCoroutine());
+            StartTypeWords(_response);
+            EnqueueClip(_clip);
+            Debug.Log("音频时长：" + _response + "---" + _clip.length);
+            //开始逐个显示返回的文本
         }
-    }
 
-    private IEnumerator PlayQueueCoroutine()
-    {
-        Constant.ChatData.IsSpeaking = true;
-        while (playbackQueue.Count > 0)
+        private void EnqueueClip(AudioClip _clip)
         {
-            AudioClip clip = playbackQueue.Dequeue();
-            m_AudioSource.clip = clip;
-            m_AudioSource.Play();
-
-            yield return new WaitForSeconds(clip.length);
+            playbackQueue.Enqueue(_clip);
+            if (!Constant.ChatData.IsSpeaking)
+            {
+                StartCoroutine(PlayQueueCoroutine());
+            }
         }
-        Constant.ChatData.IsSpeaking = false;
-    }
-    #endregion
 
-    #region 聊天记录
+        private IEnumerator PlayQueueCoroutine()
+        {
+            Constant.ChatData.IsSpeaking = true;
+            while (playbackQueue.Count > 0)
+            {
+                AudioClip clip = playbackQueue.Dequeue();
+                m_AudioSource.clip = clip;
+                m_AudioSource.Play();
+
+                yield return new WaitForSeconds(clip.length);
+            }
+            Constant.ChatData.IsSpeaking = false;
+        }
+        #endregion
+
+        #region 聊天记录
         //保存聊天记录
         [SerializeField] private List<string> m_ChatHistory;
         //缓存已创建的聊天气泡
@@ -322,14 +322,14 @@ namespace Aki.Scripts.UI
         }
 
 
-    #endregion
-    
-    #region 文字逐个显示
+        #endregion
+
+        #region 文字逐个显示
         //逐字显示的时间间隔
         [SerializeField] private float m_WordWaitTime = 0.2f;
         //是否显示完成
         [SerializeField] private bool m_WriteState = false;
-    
+
         /// <summary>
         /// 开始逐个打印
         /// </summary>
@@ -356,9 +356,7 @@ namespace Aki.Scripts.UI
                 m_WriteState = currentPos < _msg.Length;
 
             }
-
-            //切换到等待动作
         }
-    #endregion
+        #endregion
     }
 }
