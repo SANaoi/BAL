@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using Aki.Scripts.UI;
+using GameEntry = Aki.Scripts.Base.GameEntry;
+using UnityGameFramework.Runtime;
 
 namespace Aki.Scripts.Entities
 {
@@ -16,6 +18,14 @@ namespace Aki.Scripts.Entities
         private Coroutine fadeCoroutine;
 
         public bool IsActive {get; protected set;} = true;
+
+        protected override void OnInit(object userData)
+        {
+            base.OnInit(userData);
+
+            // interactionPrompt = GameEntry.UI.HasUIForm
+        }
+
         public virtual void OnEnterRange()
         {
             TogglePrompt(true);

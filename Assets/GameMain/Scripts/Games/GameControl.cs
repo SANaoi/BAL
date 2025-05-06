@@ -1,6 +1,8 @@
 using System;
 using Aki.Procedures;
+using Aki.Scripts.Definition.Constant;
 using Aki.Scripts.Entities;
+using UnityGameFramework.Runtime;
 using GameEntry = Aki.Scripts.Base.GameEntry;
 
 namespace Aki.Scripts.Games
@@ -12,9 +14,11 @@ namespace Aki.Scripts.Games
         /// </summary>
         public ProcedureGame ProcedureGame;
 
-        public GameControl(Object userData)
+        public GameControl(object userData)
         {
             ProcedureGame = userData as ProcedureGame;
+
+            GameEntry.DataNode.GetOrAddNode(Constant.ProcedureRunningData.IntractableUISerialId).SetData<VarInt32>(ProcedureGame.interactableFormSerialId);
         }
 
         /// <summary>
@@ -22,7 +26,8 @@ namespace Aki.Scripts.Games
         /// </summary>
         public void Init()
         {
-            InitPlayer();
+            InitUI();
+            InitEntity();
         }
 
         /// <summary>
@@ -32,11 +37,18 @@ namespace Aki.Scripts.Games
         {
         }
 
-        private void InitPlayer()
+        private void InitEntity()
         {
             PlayerData playerData = new PlayerData(GameEntry.Entity.GenerateSerialId(), (int)EnumEntity.Player);
-        
+            CharacterData characterData = new CharacterData(GameEntry.Entity.GenerateSerialId(), (int)EnumEntity.Azusa_Swimsuit);
+
+
             GameEntry.Entity.ShowEntity(playerData, typeof(PlayerLogic));
+            GameEntry.Entity.ShowEntity(characterData, typeof(CharacterInteractableLogic));
         }   
+
+        private void InitUI()
+        {
+        }
     }
 }

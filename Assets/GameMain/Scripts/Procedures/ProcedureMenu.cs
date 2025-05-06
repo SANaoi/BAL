@@ -21,14 +21,15 @@ namespace Aki.Procedures
         /// <summary>
         /// 拿到主菜单UI引用
         /// </summary>
-        private MenuForm m_MenuForm;
+        private int m_MenuFormSerialId;
 
         protected override void OnEnter(IFsm<IProcedureManager> procedureOwner)
         {
             base.OnEnter(procedureOwner);
             GameEntry.DataNode.SetData<VarBoolean>(Constant.ProcedureRunningData.CanChangeProcedure, false);
             GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
-            GameEntry.UI.OpenUIForm((int)EnumUIForm.MenuForm, this);
+            m_MenuFormSerialId = (int)GameEntry.UI.OpenUIForm((int)EnumUIForm.MenuForm, this);
+
         }
 
         protected override void OnUpdate(IFsm<IProcedureManager> procedureOwner, float elapseSeconds, float realElapseSeconds)
@@ -45,7 +46,7 @@ namespace Aki.Procedures
         {
             base.OnLeave(procedureOwner, isShutdown);
             GameEntry.Event.Unsubscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
-            GameEntry.UI.CloseUIForm(m_MenuForm.UIForm);
+            GameEntry.UI.CloseUIForm(m_MenuFormSerialId);
         }
 
         private void OnOpenUIFormSuccess(object sender, GameEventArgs e)
@@ -56,8 +57,6 @@ namespace Aki.Procedures
                 return;
             }
 
-            m_MenuForm = (MenuForm) ne.UIForm.Logic;
-            GameFrameworkLog.Info("Has get the MenuForm");
         }
     }
 }

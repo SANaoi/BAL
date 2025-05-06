@@ -1,5 +1,5 @@
 ﻿// 此文件由工具自动生成，请勿直接修改。
-// 生成时间：2025-04-27 23:14:06.646
+// 生成时间：2025-05-07 04:13:32.089
 //------------------------------------------------------------
 
 namespace Aki
@@ -39,6 +39,16 @@ namespace Aki
         /// <summary>
         /// AI聊天界面
         /// </summary>
-        UIAIChatForm = 104,
+        AIChatForm = 104,
+
+        /// <summary>
+        /// 交互界面
+        /// </summary>
+        InteractableForm = 105,
+
+        /// <summary>
+        /// 交互物体界面
+        /// </summary>
+        InteractItemForm = 106,
     }
 }

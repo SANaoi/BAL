@@ -6,12 +6,16 @@ using UnityGameFramework.Runtime;
 using Aki.Scripts.Games;
 using GameEntry = Aki.Scripts.Base.GameEntry;
 using Aki.Scripts.Definition.Constant;
+using Aki.Scripts.UI;
+using GameFramework.Event;
 
 namespace Aki.Procedures
 {
     public class ProcedureGame : ProcedureBase
     {
         private GameControl GameControl;
+        public int interactableFormSerialId;
+
         protected override void OnEnter(IFsm<IProcedureManager> procedureOwner)
         {
             base.OnEnter(procedureOwner);
@@ -19,12 +23,11 @@ namespace Aki.Procedures
 
             // 调用订阅事件
             GameEntry.Event.Fire(this, ReferencePool.Acquire<LoadNextResourcesSuccessArgs>().Fill(true));
+            GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
+            interactableFormSerialId = (int)GameEntry.UI.OpenUIForm(EnumUIForm.InteractableForm, this);
 
-            if (GameControl == null)
-            {
-                GameControl = new GameControl(this);
-            }
-            GameControl?.Init();
+            GameEntry.DataNode.GetOrAddNode(Constant.ProcedureRunningData.IntractableUISerialId).SetData<VarInt32>(interactableFormSerialId);
+
         }
 
         protected override void OnUpdate(IFsm<IProcedureManager> procedureOwner, float elapseSeconds, float realElapseSeconds)
@@ -40,6 +43,16 @@ namespace Aki.Procedures
         protected override void OnLeave(IFsm<IProcedureManager> procedureOwner, bool isShutdown)
         {
             base.OnLeave(procedureOwner, isShutdown);
+            GameEntry.Event.Unsubscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
+        }
+
+        private void OnOpenUIFormSuccess(object sender, GameEventArgs e)
+        {
+            if (GameControl == null)
+            {
+                GameControl = new GameControl(this);
+                GameControl?.Init();
+            }
         }
     }
 }

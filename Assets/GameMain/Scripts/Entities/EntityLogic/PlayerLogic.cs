@@ -44,9 +44,9 @@ namespace Aki.Scripts.Entities
 
         [Header("交互设置")]
         [SerializeField] private LayerMask interactableLayer;
+        [SerializeField] private BoxCollider triggerCollider;
         private InteractableEntityLogic currentInteractable;
         private HashSet<InteractableEntityLogic> potentialInteractables = new();
-        private BoxCollider triggerCollider;
         private Vector3 triggerOffset = new Vector3(0, 1f, 0);
 
         protected override void OnInit(object userData)
@@ -65,7 +65,7 @@ namespace Aki.Scripts.Entities
             characterController = GetComponent<CharacterController>();
             rb = GetComponent<Rigidbody>();
 
-            triggerCollider = GetComponent<BoxCollider>();
+            triggerCollider = GetComponentInChildren<BoxCollider>();
             triggerCollider.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
             triggerCollider.isTrigger = true;
 
@@ -300,7 +300,12 @@ namespace Aki.Scripts.Entities
 
         private void HandleInteractionInput()
         {
+            if (currentInteractable == null) return;
 
+            if (currentInteractable.IsActive)
+            {
+                currentInteractable.OnInteract();
+            }
         }
 
         private void OnTriggerEnter(Collider other)
@@ -315,12 +320,12 @@ namespace Aki.Scripts.Entities
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.TryGetComponent<InteractableEntityLogic>(out var interactable))
+            if (other.TryGetComponent<InteractableEntityLogic>(out var interactableEntityLogic))
             {
-                potentialInteractables.Remove(interactable);
-                if (interactable == currentInteractable)
+                potentialInteractables.Remove(interactableEntityLogic);
+                if (interactableEntityLogic == currentInteractable)
                 {
-                    interactable.OnExitRange();
+                    interactableEntityLogic.OnExitRange();
                 }
             }
         }

@@ -2,4 +2,5 @@
 #	Id		AssetName	GroupName	Tag	PoolParamId
 #	int		string	string	string	int
 #	配置编号	策划备注	资源名称	所处资源组名称	tag标识	对象池参数Id
-	10000	玩家	Player	Players	P1	1002
+	10000	sensei(误)	Player	Players	P1	1002
+	10001	白洲梓	Azusa_Swimsuit	Characters	P1	1002

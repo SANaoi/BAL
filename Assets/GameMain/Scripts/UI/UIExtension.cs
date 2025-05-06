@@ -3,6 +3,7 @@ using Aki.Scripts.DataTable;
 using Aki.Scripts.Utility;
 using UnityGameFramework.Runtime;
 using GameEntry = Aki.Scripts.Base.GameEntry;
+using GameFramework.UI;
 
 namespace Aki.Scripts.UI
 {
@@ -27,6 +28,7 @@ namespace Aki.Scripts.UI
         {
             uiComponent.OpenUIForm(EnumUIForm.DialogForm, dialogParams);
         }
+
     }
 
 }

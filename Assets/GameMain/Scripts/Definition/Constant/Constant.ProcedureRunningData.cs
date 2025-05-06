@@ -23,7 +23,10 @@ namespace Aki.Scripts.Definition.Constant
             /// 过渡界面文字提示
             /// </summary>
             public const string TransitionalMessage = "TransitionalMessage";
-
+            /// <summary>
+            /// 交互UI管理序列号
+            /// </summary>
+            public const string IntractableUISerialId = "IntractableUISerialId";
         }
     }
 }

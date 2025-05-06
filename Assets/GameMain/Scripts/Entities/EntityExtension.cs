@@ -36,7 +36,7 @@ namespace Aki.Scripts.Entities
         {
         }
 
-        public static void ShowEntity(this EntityComponent entityComponent, EntityData entityData, Type logicType)
+        public static void ShowEntity(this EntityComponent entityComponent, EntityData entityData, Type logicType, object userData = null)
         {
             int id = entityData.Id;
             string assetName = AssetUtility.GetEntityAsset(entityData.AssetName);
