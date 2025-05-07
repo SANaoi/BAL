@@ -1,8 +1,10 @@
-using System.Collections;
-using UnityEngine;
+
 using Aki.Scripts.UI;
-using GameEntry = Aki.Scripts.Base.GameEntry;
+using Aki.Scripts.Definition.Constant;
+using UnityEngine;
 using UnityGameFramework.Runtime;
+using GameEntry = Aki.Scripts.Base.GameEntry;
+using GameFramework.Event;
 
 namespace Aki.Scripts.Entities
 {
@@ -10,59 +12,59 @@ namespace Aki.Scripts.Entities
     {
 
         [Header("UI References")]
-        [SerializeField] protected UGuiForm interactionPrompt; // 交互提示UI
-        [SerializeField] protected CanvasGroup targetUI; // 显示交互后的目标界面
+        public InteractableForm interactableForm; // 交互主界面
+        public InteractItemForm interactItemForm; // 与实体绑定的交互单元界面
+        private int m_interactItemFormSerialId;
+        private int m_interactableFormSerialId;
 
-        [Header("Interaction Settings")]
-        [SerializeField] private float fadeDuration = 0.3f;
-        private Coroutine fadeCoroutine;
-
-        public bool IsActive {get; protected set;} = true;
+        public bool IsActive { get; protected set; } = true;
 
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
+            GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
 
-            // interactionPrompt = GameEntry.UI.HasUIForm
+        }
+        protected override void OnShow(object userData)
+        {
+            base.OnShow(userData);
+            m_interactableFormSerialId = GameEntry.DataNode.GetData<VarInt32>(Constant.ProcedureRunningData.InteractableUISerialId);
+            m_interactItemFormSerialId = (int)GameEntry.UI.OpenUIForm(EnumUIForm.InteractItemForm);
+        }
+        protected override void OnRecycle()
+        {
+            GameEntry.Event.Unsubscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
+        }
+
+        void OnOpenUIFormSuccess(object sender, GameEventArgs e)
+        {
+            interactableForm = (InteractableForm)GameEntry.UI.GetUIForm(m_interactableFormSerialId).Logic;
+            interactItemForm = (InteractItemForm)GameEntry.UI.GetUIForm(m_interactItemFormSerialId).Logic;
+            interactableForm.Visible = true;
+            interactItemForm.Visible = false;
+
+            interactableForm.AddInteractableItem(interactItemForm);
         }
 
         public virtual void OnEnterRange()
         {
-            TogglePrompt(true);
+            if (interactItemForm != null)
+            {
+                interactItemForm.Visible = true;
+            }
         }
         public virtual void OnExitRange()
         {
-            TogglePrompt(false);
-            CloseUI();
-        }
-        
-        // 交互逻辑
-        public virtual void OnInteract() { }
-        private void TogglePrompt(bool show) => interactionPrompt.gameObject.SetActive(show);
-
-        protected void ToggleUI(bool show)
-        {
-            if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
-            fadeCoroutine = StartCoroutine(FadeUI(show ? 1 : 0));
-        }
-
-        private IEnumerator FadeUI(float targetAlpha)
-        {
-            float elapsed = 0;
-            float startAlpha = targetUI.alpha;
-
-            while (elapsed < fadeDuration)
+            if (interactItemForm != null)
             {
-                targetUI.alpha = Mathf.Lerp(startAlpha, targetAlpha, elapsed / fadeDuration);
-                elapsed += Time.deltaTime;
-                yield return null;
+                interactItemForm.Visible = false;
             }
-
-            targetUI.alpha = targetAlpha;
-            targetUI.interactable = targetAlpha > 0.9f;
-            targetUI.blocksRaycasts = targetAlpha > 0.9f;
         }
-        private void CloseUI() => ToggleUI(false);
+        // 交互逻辑
+        public virtual void OnInteract()
+        {
+        }
+
     }
 
 }

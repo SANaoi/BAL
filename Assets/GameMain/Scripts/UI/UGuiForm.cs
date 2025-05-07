@@ -11,7 +11,6 @@ namespace Aki.Scripts.UI
     public class UGuiForm : UIFormLogic
     {
         private Canvas m_CachedCanvas = null;
-        private CanvasGroup m_CanvasGroup = null;
         private const float FadeTime = 0.3f;
         public const int DepthFactor = 100;
         public int OriginalDepth
@@ -27,7 +26,7 @@ namespace Aki.Scripts.UI
                 return m_CachedCanvas.sortingOrder;
             }
         }
-        
+
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
@@ -35,8 +34,6 @@ namespace Aki.Scripts.UI
             m_CachedCanvas = gameObject.GetOrAddComponent<Canvas>();
             m_CachedCanvas.overrideSorting = true;
             OriginalDepth = m_CachedCanvas.sortingOrder;
-
-            m_CanvasGroup = gameObject.GetOrAddComponent<CanvasGroup>();
 
             RectTransform transform = GetComponent<RectTransform>();
             transform.anchorMin = Vector2.zero;
@@ -46,7 +43,7 @@ namespace Aki.Scripts.UI
 
             gameObject.GetOrAddComponent<GraphicRaycaster>();
         }
-        
+
         protected override void OnDepthChanged(int uiGroupDepth, int depthInUIGroup)
         {
             int oldDepth = Depth;
@@ -59,24 +56,6 @@ namespace Aki.Scripts.UI
                 canvases[i].sortingOrder += deltaDepth;
             }
         }
-        public void Close(bool ignoreFade)
-        {
-            StopAllCoroutines();
 
-            if (ignoreFade)
-            {
-                GameEntry.UI.CloseUIForm(this.UIForm);
-            }
-            else
-            {
-                StartCoroutine(CloseCo(FadeTime));
-            }
-        }
-        
-        private IEnumerator CloseCo(float duration)
-        {
-            yield return m_CanvasGroup.DOFade(0f, duration);
-            GameEntry.UI.CloseUIForm(this.UIForm);
-        }
     }
 }

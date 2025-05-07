@@ -18,7 +18,7 @@ namespace Aki.Scripts.Games
         {
             ProcedureGame = userData as ProcedureGame;
 
-            GameEntry.DataNode.GetOrAddNode(Constant.ProcedureRunningData.IntractableUISerialId).SetData<VarInt32>(ProcedureGame.interactableFormSerialId);
+            GameEntry.DataNode.GetOrAddNode(Constant.ProcedureRunningData.InteractableUISerialId).SetData<VarInt32>(ProcedureGame.interactableFormSerialId);
         }
 
         /// <summary>

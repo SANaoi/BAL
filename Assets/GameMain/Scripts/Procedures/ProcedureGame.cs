@@ -26,7 +26,7 @@ namespace Aki.Procedures
             GameEntry.Event.Subscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
             interactableFormSerialId = (int)GameEntry.UI.OpenUIForm(EnumUIForm.InteractableForm, this);
 
-            GameEntry.DataNode.GetOrAddNode(Constant.ProcedureRunningData.IntractableUISerialId).SetData<VarInt32>(interactableFormSerialId);
+            GameEntry.DataNode.GetOrAddNode(Constant.ProcedureRunningData.InteractableUISerialId).SetData<VarInt32>(interactableFormSerialId);
 
         }
 
@@ -44,6 +44,7 @@ namespace Aki.Procedures
         {
             base.OnLeave(procedureOwner, isShutdown);
             GameEntry.Event.Unsubscribe(OpenUIFormSuccessEventArgs.EventId, OnOpenUIFormSuccess);
+            GameEntry.DataNode.RemoveNode(Constant.ProcedureRunningData.InteractableUISerialId);
         }
 
         private void OnOpenUIFormSuccess(object sender, GameEventArgs e)

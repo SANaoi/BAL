@@ -26,7 +26,7 @@ namespace Aki.Scripts.Definition.Constant
             /// <summary>
             /// 交互UI管理序列号
             /// </summary>
-            public const string IntractableUISerialId = "IntractableUISerialId";
+            public const string InteractableUISerialId = "InteractableUISerialId";
         }
     }
 }

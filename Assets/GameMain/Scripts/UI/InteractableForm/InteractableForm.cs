@@ -32,7 +32,7 @@ namespace Aki.Scripts.UI
                 return;
             }
 
-            interactItemForm.transform.SetParent(ScrollViewContent.transform, false); 
+            interactItemForm.gameObject.transform.SetParent(ScrollViewContent.transform, false); 
         }
     }
 }
