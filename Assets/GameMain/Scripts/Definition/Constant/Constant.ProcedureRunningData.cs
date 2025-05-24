@@ -27,6 +27,10 @@ namespace Aki.Scripts.Definition.Constant
             /// 交互UI管理序列号
             /// </summary>
             public const string InteractableUISerialId = "InteractableUISerialId";
+            /// <summary>
+            /// AI聊天UI管理序列号
+            /// </summary>
+            public const string AIChatFormSerialId = "AIChatFormSerialId";
         }
     }
 }

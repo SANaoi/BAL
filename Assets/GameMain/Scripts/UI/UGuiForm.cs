@@ -11,7 +11,6 @@ namespace Aki.Scripts.UI
     public class UGuiForm : UIFormLogic
     {
         private Canvas m_CachedCanvas = null;
-        private const float FadeTime = 0.3f;
         public const int DepthFactor = 100;
         public int OriginalDepth
         {

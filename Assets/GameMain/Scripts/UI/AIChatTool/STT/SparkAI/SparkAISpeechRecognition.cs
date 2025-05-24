@@ -132,7 +132,7 @@ namespace Aki.Scripts.UI
                     }
 
                     string json = JsonUtility.ToJson(request);
-                    Debug.Log("当前消息发送状态： " + request.data.status);
+                    // Debug.Log("当前消息发送状态： " + request.data.status);
                     ws.Send(json);
 
                     position += frameSize;

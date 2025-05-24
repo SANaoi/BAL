@@ -14,7 +14,7 @@ namespace UnityGameFramework.Runtime
     /// </summary>
     public abstract class UIFormLogic : MonoBehaviour
     {
-        private bool m_Available = false;
+        private bool m_Available = true;
         private bool m_Visible = false;
         private UIForm m_UIForm = null;
         private Transform m_CachedTransform = null;

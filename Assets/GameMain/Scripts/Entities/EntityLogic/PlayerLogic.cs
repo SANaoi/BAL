@@ -207,6 +207,7 @@ namespace Aki.Scripts.Entities
             moveActions.Move.canceled += OnMovementCanceled;
             moveActions.Move.performed += GetplayerMoveInput;
             moveActions.Run.performed += GetRunInput;
+            moveActions.Interact.performed += GetHandleInteractionInput;
         }
 
         protected virtual void RemoveInputActionsCallbacks()
@@ -214,6 +215,7 @@ namespace Aki.Scripts.Entities
             moveActions.Move.canceled -= OnMovementCanceled;
             moveActions.Move.performed -= GetplayerMoveInput;
             moveActions.Run.performed -= GetRunInput;
+            moveActions.Interact.performed -= GetHandleInteractionInput;
         }
 
         void GetplayerMoveInput(InputAction.CallbackContext context)
@@ -230,6 +232,16 @@ namespace Aki.Scripts.Entities
             isRunning = !isRunning;
         }
 
+        void GetHandleInteractionInput(InputAction.CallbackContext context)
+        {
+            if (currentInteractable == null) return;
+
+            if (currentInteractable.IsActive && currentInteractable.IsInteractable)
+            {
+                currentInteractable.OnInteract();
+                currentInteractable.IsInteractable = false;
+            }
+        }
         #endregion
 
         #region Animation Function
@@ -295,16 +307,6 @@ namespace Aki.Scripts.Entities
                 currentInteractable?.OnExitRange();
                 currentInteractable = nearest;
                 currentInteractable?.OnEnterRange();
-            }
-        }
-
-        private void HandleInteractionInput()
-        {
-            if (currentInteractable == null) return;
-
-            if (currentInteractable.IsActive)
-            {
-                currentInteractable.OnInteract();
             }
         }
 

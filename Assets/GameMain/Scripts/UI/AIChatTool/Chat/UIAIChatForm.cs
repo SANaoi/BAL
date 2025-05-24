@@ -11,6 +11,7 @@ namespace Aki.Scripts.UI
     {
         protected override void OnInit(object userData)
         {
+            base.OnInit(userData);
             m_CommitMsgBtn.onClick.AddListener(SendData);
             m_VoiceInputBotton.onClick.AddListener(startStreamRecord);
         }

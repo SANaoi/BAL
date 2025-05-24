@@ -29,8 +29,9 @@ namespace Aki.Scripts.UI
         public override void PostMsg(string _msg, Action<string> _callback)
         {
             base.PostMsg(_msg, _callback);
-        }
+        }  
 
+        ///
         public override IEnumerator Request(string _postWord, Action<string> _callback)
         {
             yield return StartCoroutine(TaskerCoroutine(_postWord, _callback));
@@ -179,6 +180,7 @@ namespace Aki.Scripts.UI
 
             return Convert.ToBase64String(date);
         }
+        
         private JsonRequest SendJsonContent(string text)
         {
             JsonRequest request = new JsonRequest();

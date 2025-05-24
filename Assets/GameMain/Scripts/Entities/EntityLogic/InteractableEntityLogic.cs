@@ -17,6 +17,7 @@ namespace Aki.Scripts.Entities
         private int m_interactItemFormSerialId;
         private int m_interactableFormSerialId;
 
+        public bool IsInteractable = true;
         public bool IsActive { get; protected set; } = true;
 
         protected override void OnInit(object userData)
@@ -29,7 +30,7 @@ namespace Aki.Scripts.Entities
         {
             base.OnShow(userData);
             m_interactableFormSerialId = GameEntry.DataNode.GetData<VarInt32>(Constant.ProcedureRunningData.InteractableUISerialId);
-            m_interactItemFormSerialId = (int)GameEntry.UI.OpenUIForm(EnumUIForm.InteractItemForm);
+            m_interactItemFormSerialId = (int)GameEntry.UI.OpenUIForm(EnumUIForm.InteractItemForm, m_userData);
         }
         protected override void OnRecycle()
         {
