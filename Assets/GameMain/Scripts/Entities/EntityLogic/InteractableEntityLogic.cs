@@ -62,7 +62,7 @@ namespace Aki.Scripts.Entities
             }
         }
         // 交互逻辑
-        public virtual void OnInteract()
+        public virtual void OnInteract(object userData = null)
         {
         }
 

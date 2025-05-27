@@ -19,7 +19,6 @@ namespace Aki.Scripts.FSM
         {
             base.OnEnter(procedureOwner);
             owner = procedureOwner.Owner;
-            Log.Debug("进入Run状态");
         }
 
         protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)

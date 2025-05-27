@@ -19,7 +19,6 @@ namespace Aki.Scripts.FSM
         protected override void OnEnter(ProcedureOwner procedureOwner)
         {
             base.OnEnter(procedureOwner);
-            Log.Debug("进入Idle状态");
             owner = procedureOwner.Owner;
         }
 

@@ -9,9 +9,10 @@ namespace Aki.Scripts.Camera
         public Transform target;
 
         CameraData cameraData;
-        CinemachineVirtualCamera virtualCamera;
+        public UnityEngine.Camera m_Camera;
+        public CinemachineVirtualCamera virtualCamera;
         CinemachineFramingTransposer framingTransposer;
-        CinemachineInputProvider inputProvider;
+        public InputProviderControl inputProvider;
         float targetDistance;
 
         [SerializeField][Range(0f, 10f)] private float defaultDistance = 2f;
@@ -27,9 +28,10 @@ namespace Aki.Scripts.Camera
             cameraData = userData as CameraData;
             virtualCamera = GetComponent<CinemachineVirtualCamera>();
             framingTransposer = GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineFramingTransposer>();
-            inputProvider = GetComponent<CinemachineInputProvider>();
+            inputProvider = GetComponent<InputProviderControl>();
 
             targetDistance = defaultDistance;
+            m_Camera = UnityEngine.Camera.main;
         }
 
         protected override void OnUpdate(float elapseSeconds, float realElapseSeconds)
@@ -44,6 +46,14 @@ namespace Aki.Scripts.Camera
             virtualCamera.Follow = target;
             virtualCamera.LookAt = target;
             target.position = cameraData.DefaultLocalPosition;
+        }
+
+        public void OnInteract(Transform target)
+        {
+            inputProvider.enabled = false;
+            virtualCamera.enabled = false;
+            m_Camera.transform.position = target.position + new Vector3(0, 0, 0.7f);
+            m_Camera.transform.LookAt(target.position);
         }
 
         void ScrollWheel()

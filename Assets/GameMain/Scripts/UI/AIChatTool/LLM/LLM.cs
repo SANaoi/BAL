@@ -40,7 +40,7 @@ namespace Aki.Scripts.UI
         /// <summary>
         /// 临时存放分割的回复
         /// </summary>
-        protected ConcurrentQueue<string> m_tempResponse = new ConcurrentQueue<string>();
+        [SerializeField] protected ConcurrentQueue<string> m_tempResponse = new ConcurrentQueue<string>();
 
 
         /// <summary>

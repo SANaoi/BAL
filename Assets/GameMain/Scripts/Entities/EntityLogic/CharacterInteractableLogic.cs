@@ -4,6 +4,7 @@ using Aki.Scripts.UI;
 using Aki.Scripts.Definition.Constant;
 using UnityGameFramework.Runtime;
 using System.Threading.Tasks;
+using Aki.Scripts.Camera;
 
 namespace Aki.Scripts.Entities
 {
@@ -11,12 +12,14 @@ namespace Aki.Scripts.Entities
     {
         private Animator m_Animator;
         private CharacterData characterData;
+        public Transform CameraPoint;
+        private CameraControl cameraControl;
 
         protected override void OnInit(object userData)
         {
             base.OnInit(userData);
             m_Animator = GetComponent<Animator>();
-
+            CameraPoint = GameObject.Find("CameraPoint").transform;
             characterData = userData as CharacterData;
         }
 
@@ -28,6 +31,8 @@ namespace Aki.Scripts.Entities
         public override void OnEnterRange()
         {
             base.OnEnterRange();
+
+
         }
 
         public override void OnExitRange()
@@ -35,7 +40,7 @@ namespace Aki.Scripts.Entities
             base.OnExitRange();
         }
 
-        public override void OnInteract()
+        public override void OnInteract(object userData = null)
         {
             base.OnInteract();
 
@@ -43,6 +48,15 @@ namespace Aki.Scripts.Entities
             {
                 GameEntry.UI.OpenUIForm(EnumUIForm.AIChatForm, this); 
                 // GameEntry.DataNode.GetOrAddNode(Constant.ProcedureRunningData.AIChatFormSerialId).SetData<VarInt32>(AIChatFormId);
+                IsInteractable = false;
+
+                if (userData is PlayerLogic PlayerLogic)
+                {
+                    PlayerLogic.RemoveInputActionsCallbacks();
+                    PlayerLogic.gameObject.SetActive(false);
+                    cameraControl = GameEntry.Entity.GetEntity(PlayerLogic.cameraData.entityId).Logic as CameraControl;
+                    cameraControl.OnInteract(CameraPoint);
+                }
             }
             else
             {

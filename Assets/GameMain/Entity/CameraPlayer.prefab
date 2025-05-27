@@ -161,7 +161,7 @@ GameObject:
   m_Component:
   - component: {fileID: 102291901692359414}
   - component: {fileID: 409098571785392149}
-  - component: {fileID: 3844368134621787179}
+  - component: {fileID: 6042626691628461191}
   - component: {fileID: 3562421039718462056}
   m_Layer: 0
   m_Name: CameraPlayer
@@ -225,7 +225,7 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 6182025474445850650}
---- !u!114 &3844368134621787179
+--- !u!114 &6042626691628461191
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -234,7 +234,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8309885721919949386}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb7194dc27b9df64c8beca7482ee8e0d, type: 3}
+  m_Script: {fileID: 11500000, guid: fb1a91ae56a9c9041a01322def4f1de7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerIndex: -1

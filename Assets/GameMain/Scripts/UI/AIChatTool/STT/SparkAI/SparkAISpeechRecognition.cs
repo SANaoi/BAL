@@ -6,6 +6,7 @@ using System.Text;
 using System.Security.Cryptography;
 using WebSocketSharp;
 using static Aki.Scripts.UI.DataSparkAISTT;
+using System.Collections.Generic;
 
 namespace Aki.Scripts.UI
 {
@@ -29,7 +30,22 @@ namespace Aki.Scripts.UI
         private bool isFirstFrameSent = false;
         public StringBuilder fullResult = new StringBuilder();
 
+        // 线程安全的任务队列
+        private Queue<Action> _mainThreadActions = new Queue<Action>();
+        private object _queueLock = new object();
         private Action<string> m_callback = null;
+
+        void Update()
+        {
+            lock (_queueLock)
+            {
+                while (_mainThreadActions.Count > 0)
+                {
+                    Action action = _mainThreadActions.Dequeue();
+                    action?.Invoke();
+                }
+            }
+        }
         public override void SpeechToText(Action<string> _callback)
         {
             ToggleRecording();
@@ -182,8 +198,15 @@ namespace Aki.Scripts.UI
                     }
                 }
                 fullResult.Append(currentText);
-
-                m_callback?.Invoke(currentText.ToString());
+                
+                lock (_queueLock)
+                {
+                    _mainThreadActions.Enqueue(() =>
+                    {
+                        // 在主线程触发回调
+                        m_callback?.Invoke(fullResult.ToString());
+                    });
+                }
             }
         }
         #endregion

@@ -68,6 +68,7 @@ namespace Aki.Scripts.Entities
             triggerCollider = GetComponentInChildren<BoxCollider>();
             triggerCollider.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
             triggerCollider.isTrigger = true;
+            interactableLayer = LayerMask.GetMask("Default");
 
         }
 
@@ -210,7 +211,7 @@ namespace Aki.Scripts.Entities
             moveActions.Interact.performed += GetHandleInteractionInput;
         }
 
-        protected virtual void RemoveInputActionsCallbacks()
+        public virtual void RemoveInputActionsCallbacks()
         {
             moveActions.Move.canceled -= OnMovementCanceled;
             moveActions.Move.performed -= GetplayerMoveInput;
@@ -238,8 +239,7 @@ namespace Aki.Scripts.Entities
 
             if (currentInteractable.IsActive && currentInteractable.IsInteractable)
             {
-                currentInteractable.OnInteract();
-                currentInteractable.IsInteractable = false;
+                currentInteractable.OnInteract(this);
             }
         }
         #endregion

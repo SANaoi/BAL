@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Aki.Scripts.Definition.Constant;
+using Unity.VisualScripting;
+using System.Threading.Tasks;
 
 namespace Aki.Scripts.UI
 {
@@ -79,7 +81,6 @@ namespace Aki.Scripts.UI
             }
             //判断是否在聊天中
             Constant.ChatData.IsChatting = true;
-
             //添加记录聊天
             m_ChatHistory.Add(m_InputWord.text);
             //提示词
@@ -205,8 +206,9 @@ namespace Aki.Scripts.UI
                 SendData(_msg);
                 return;
             }
-
         }
+
+
 
         #endregion
 
@@ -232,7 +234,7 @@ namespace Aki.Scripts.UI
         private IEnumerator PlayQueueCoroutine()
         {
             Constant.ChatData.IsSpeaking = true;
-            while (playbackQueue.Count > 0)
+            while (playbackQueue.Count > 0 && !m_AudioSource.isPlaying)
             {
                 AudioClip clip = playbackQueue.Dequeue();
                 m_AudioSource.clip = clip;
@@ -329,7 +331,7 @@ namespace Aki.Scripts.UI
         //逐字显示的时间间隔
         [SerializeField] private float m_WordWaitTime = 0.2f;
         //是否显示完成
-        [SerializeField] private bool m_WriteState = false;
+        // [SerializeField] private bool m_WriteState = false;
 
         /// <summary>
         /// 开始逐个打印
@@ -340,23 +342,21 @@ namespace Aki.Scripts.UI
             if (_msg == "")
                 return;
 
-            m_WriteState = true;
             StartCoroutine(SetTextPerWord(_msg));
         }
 
         private IEnumerator SetTextPerWord(string _msg)
         {
-            int currentPos = 0;
-            while (m_WriteState)
-            {
-                yield return new WaitForSeconds(m_WordWaitTime);
-                currentPos++;
-                //更新显示的内容
-                m_TextBack.text = _msg.Substring(0, currentPos);
-
-                m_WriteState = currentPos < _msg.Length;
-
-            }
+            // int currentPos = 0;
+            //更新显示的内容
+            m_TextBack.text = _msg;
+            yield return new WaitForSeconds(m_WordWaitTime);
+            // while (m_WriteState)
+            // {
+            //     yield return new WaitForSeconds(m_WordWaitTime);
+            //     currentPos++;
+            //     m_WriteState = currentPos < _msg.Length;
+            // }
         }
         #endregion
     }

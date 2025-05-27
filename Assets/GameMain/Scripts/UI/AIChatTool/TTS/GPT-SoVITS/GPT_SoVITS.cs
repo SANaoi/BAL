@@ -20,6 +20,7 @@ namespace Aki.Scripts.UI
         [Header("合成音频的语言")]
         [SerializeField] private string m_TargetTextLan = "zh";//合成音频的语言
         private string m_Audio2Path = "";//参考音频的路径
+        private string m_textBack = "";//返回的文本
         #endregion
 
         private void Start()
@@ -43,7 +44,7 @@ namespace Aki.Scripts.UI
         private IEnumerator GetVoice(string _msg, Action<AudioClip, string> _callback)
         {
             stopwatch.Restart();
-
+            m_textBack = "";
             string json = GetPostJson(_msg);
             if (string.IsNullOrEmpty(json))
             {
@@ -61,7 +62,8 @@ namespace Aki.Scripts.UI
                 if (request.result == UnityWebRequest.Result.Success)
                 {
                     AudioClip clip = DownloadHandlerAudioClip.GetContent(request);
-                    _callback?.Invoke(clip, _msg);
+                    m_textBack += _msg;
+                    _callback?.Invoke(clip, m_textBack);
                 }
                 else
                 {
